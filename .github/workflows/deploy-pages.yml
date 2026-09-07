@@ -1,0 +1,41 @@
+# Deploys the AI Lab visual playground to GitHub Pages on every push to main.
+# After the first successful run, enable: Settings → Pages → Source: "GitHub Actions".
+# Your lab will then be live at: https://<username>.github.io/<repo>/lab/playground.html
+
+name: Deploy Lab to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload lab folder as site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./lab
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

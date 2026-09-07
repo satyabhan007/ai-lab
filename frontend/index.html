@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Account Rotator & AI Pro Quota Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --surface: #111827;
+            --surface-hover: #1f2937;
+            --border: #374151;
+            --border-light: rgba(255, 255, 255, 0.08);
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.25);
+            --accent: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --cyan: #06b6d4;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1150px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px var(--primary-glow);
+        }
+
+        .brand-text h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(90deg, #ffffff, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-text p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.83rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            box-shadow: 0 2px 8px var(--primary-glow);
+        }
+        .btn-primary:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: var(--surface);
+            color: var(--text-main);
+            border-color: var(--border);
+        }
+        .btn-outline:hover {
+            background: var(--surface-hover);
+            border-color: #4b5563;
+        }
+
+        .btn-active {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border-color: rgba(16, 185, 129, 0.3);
+            cursor: default;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.78rem;
+        }
+
+        .btn-warning-action {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+        .btn-warning-action:hover {
+            background: rgba(245, 158, 11, 0.25);
+        }
+
+        /* Top Metrics Row */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 18px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, transparent);
+        }
+
+        .metric-card.accent::before {
+            background: linear-gradient(90deg, #10b981, #06b6d4);
+        }
+
+        .metric-label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-main);
+        }
+
+        .metric-value.countdown {
+            color: #34d399;
+            text-shadow: 0 0 12px rgba(52, 211, 153, 0.3);
+        }
+
+        .metric-sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Model Filter Bar */
+        .model-filter-container {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .model-filter-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .model-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .model-pill {
+            background: #0d131f;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .model-pill:hover {
+            border-color: var(--primary);
+            color: var(--text-main);
+        }
+
+        .model-pill.active {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: var(--primary);
+            color: #60a5fa;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Section Header */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* Accounts Grid */
+        .accounts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 18px;
+        }
+
+        .account-card {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+        }
+
+        .account-card:hover {
+            border-color: #4b5563;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+        }
+
+        .account-card.active-account {
+            border-color: rgba(59, 130, 246, 0.5);
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.7), var(--surface));
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .type-badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .type-gcloud {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        .type-service_account {
+            background: rgba(139, 92, 246, 0.15);
+            color: #a78bfa;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .type-gemini_api_key {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6b7280;
+        }
+
+        .status-dot.active {
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.15); }
+        }
+
+        .account-name {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .account-id {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            word-break: break-all;
+            margin-bottom: 14px;
+        }
+
+        /* Model Quota Box */
+        .quotas-box {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .model-quota-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #93c5fd;
+            margin-bottom: 10px;
+        }
+
+        .quota-status-badge {
+            font-size: 0.7rem;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .quota-status-healthy {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+        .quota-status-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+        .quota-status-exhausted {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .progress-bar-wrap {
+            height: 6px;
+            background: #1f2937;
+            border-radius: 3px;
+            margin: 6px 0 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #3b82f6;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        .progress-bar.warning { background: #f59e0b; }
+        .progress-bar.exhausted { background: #ef4444; }
+
+        .quota-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+            margin-bottom: 6px;
+        }
+        .quota-row:last-child { margin-bottom: 0; }
+
+        .quota-label { color: var(--text-muted); }
+        .quota-val { font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+
+        .usage-action-buttons {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.08);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            width: 90%;
+            max-width: 520px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .modal-title { font-size: 1.15rem; font-weight: 700; }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.4rem;
+            cursor: pointer;
+        }
+
+        .form-group { margin-bottom: 16px; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: #0d131f;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: var(--text-main);
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus { border-color: var(--primary); }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .tab-btn.active {
+            background: var(--surface-hover);
+            color: var(--primary);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e293b;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.88rem;
+            z-index: 200;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 48px 20px;
+            background: var(--surface);
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            color: var(--text-muted);
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.7); }
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="brand-section">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>Google Account Rotator</h1>
+                    <p>Antigravity & Google AI Pro Model Quotas & Reset ETA Monitor</p>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button class="btn btn-outline btn-sm" onclick="syncGcloud()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/>
+                    </svg>
+                    Sync gcloud
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="openAddModal()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Add Account
+                </button>
+            </div>
+        </header>
+
+        <!-- Top Metrics Grid -->
+        <div class="metrics-grid">
+            <div class="metric-card accent">
+                <div class="metric-label">
+                    <span>Google AI Daily Quota Reset</span>
+                    <span style="color: #34d399; font-weight: 600;">00:00 PT</span>
+                </div>
+                <div class="metric-value countdown" id="global-countdown">--:--:--</div>
+                <div class="metric-sub" id="pt-current-time">Pacific Time: Syncing...</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">
+                    <span>Active gcloud Account</span>
+                    <span id="gcloud-live-badge" style="display:flex;align-items:center;gap:4px;font-size:0.7rem;color:#34d399;"><span id="gcloud-pulse" style="width:7px;height:7px;background:#34d399;border-radius:50%;display:inline-block;animation:pulse 1.8s infinite;"></span>LIVE</span>
+                </div>
+                <div class="metric-value" style="font-size: 1.05rem; word-break: break-all;" id="active-account-name">Syncing...</div>
+                <div class="metric-sub" id="active-account-type">System-wide gcloud context</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-label">Selected Model Quota Focus</div>
+                <div class="metric-value" style="font-size: 1.2rem; color: #60a5fa;" id="current-focused-model-title">Gemini 3.8 Flash</div>
+                <div class="metric-sub" id="current-focused-model-spec">60 RPM • 1,500 RPD • Rolling 60s</div>
+            </div>
+        </div>
+
+        <!-- Model Quota Filter Bar -->
+        <div class="model-filter-container">
+            <div class="model-filter-label">
+                <span>FILTER & MONITOR QUOTA BY MODEL:</span>
+                <span style="font-size: 0.75rem; color: #34d399;">● Auto-resets daily at Midnight PT</span>
+            </div>
+            <div class="model-pills" id="model-pills-list">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+
+        <!-- Accounts Section -->
+        <div class="section-header">
+            <h2 class="section-title">Connected Accounts & Model Quotas</h2>
+            <button class="btn btn-outline btn-sm" onclick="fetchAccounts()">
+                Refresh
+            </button>
+        </div>
+
+        <div class="accounts-grid" id="accounts-list">
+            <!-- Rendered dynamically -->
+        </div>
+    </div>
+
+    <!-- Add Account Modal -->
+    <div class="modal-overlay" id="add-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Account</h3>
+                <button class="close-btn" onclick="closeAddModal()">&times;</button>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('gemini_api_key')">Gemini API Key</button>
+                <button class="tab-btn" onclick="switchTab('gcloud')">Google Account</button>
+                <button class="tab-btn" onclick="switchTab('service_account')">Service Account</button>
+            </div>
+
+            <form id="add-account-form" onsubmit="handleAddAccount(event)">
+                <input type="hidden" id="form-type" value="gemini_api_key">
+
+                <div class="form-group">
+                    <label>Account Label / Name</label>
+                    <input type="text" id="form-name" class="form-control" placeholder="e.g. AI Studio Pro 1" required>
+                </div>
+
+                <!-- API Key fields -->
+                <div id="fields-api-key">
+                    <div class="form-group">
+                        <label>Gemini API Key</label>
+                        <input type="password" id="form-api-key" class="form-control" placeholder="AIzaSy...">
+                    </div>
+                </div>
+
+                <!-- gcloud fields -->
+                <div id="fields-gcloud" style="display: none;">
+                    <div class="form-group">
+                        <label>Google Account Email</label>
+                        <input type="email" id="form-email" class="form-control" placeholder="your-email@gmail.com">
+                    </div>
+                </div>
+
+                <!-- Service account fields -->
+                <div id="fields-sa" style="display: none;">
+                    <div class="form-group">
+                        <label>Service Account Key File Path</label>
+                        <input type="text" id="form-key-file" class="form-control" placeholder="C:/path/to/key.json">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Primary AI Model</label>
+                    <select id="form-model" class="form-control">
+                        <optgroup label="⚡ Antigravity Fast Models">
+                            <option value="gemini-3.8-flash">Gemini 3.8 Flash Medium (Fast)</option>
+                            <option value="gemini-3.7-flash">Gemini 3.7 Flash Medium (Fast)</option>
+                            <option value="gemini-3.6-flash">Gemini 3.6 Flash Medium (Fast)</option>
+                        </optgroup>
+                        <optgroup label="🧠 Reasoning Models">
+                            <option value="gemini-3.1-pro">Gemini 3.1 Pro Low</option>
+                            <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                            <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                        </optgroup>
+                        <optgroup label="💭 Claude Thinking Models">
+                            <option value="claude-sonnet-4.6">Claude Sonnet 4.6 (Thinking)</option>
+                            <option value="claude-opus-4.6">Claude Opus 4.6 (Thinking)</option>
+                        </optgroup>
+                        <optgroup label="🌐 Open Models">
+                            <option value="gpt-oss-120b">GPT-OSS 120B (Medium)</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Quota Tier</label>
+                    <select id="form-tier" class="form-control">
+                        <option value="free">Standard / Free Quota Pool</option>
+                        <option value="pro">Antigravity Pro / Pay-as-you-go Pool</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px;">
+                    <button type="button" class="btn btn-outline" onclick="closeAddModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span id="toast-msg">Notification</span>
+    </div>
+
+    <script>
+        let countdownSeconds = 0;
+        let selectedModelFilter = 'gemini-3.8-flash';
+        let cachedAccounts = [];
+        let supportedModels = [
+            { key: 'gemini-3.8-flash', name: 'Gemini 3.8 Flash', icon: '⚡' },
+            { key: 'gemini-3.7-flash', name: 'Gemini 3.7 Flash', icon: '⚡' },
+            { key: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash', icon: '⚡' },
+            { key: 'gemini-3.1-pro', name: 'Gemini 3.1 Pro Low', icon: '🧠' },
+            { key: 'claude-sonnet-4.6', name: 'Claude Sonnet 4.6', icon: '💭' },
+            { key: 'claude-opus-4.6', name: 'Claude Opus 4.6', icon: '👑' },
+            { key: 'gpt-oss-120b', name: 'GPT-OSS 120B', icon: '🌐' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderModelFilterPills();
+            fetchAccounts();
+            setInterval(tickCountdown, 1000);
+            startGcloudAccountStream();
+        });
+
+        // --- SSE: Live gcloud account watcher ---
+        let _gcloudSSE = null;
+        function startGcloudAccountStream() {
+            if (_gcloudSSE) _gcloudSSE.close();
+            _gcloudSSE = new EventSource('/api/stream/gcloud-account');
+            _gcloudSSE.onmessage = (evt) => {
+                try {
+                    const d = JSON.parse(evt.data);
+                    const el = document.getElementById('active-account-name');
+                    if (el && d.active_account) {
+                        el.innerText = d.active_account;
+                    }
+                } catch(e) {}
+            };
+            _gcloudSSE.onerror = () => {
+                // Reconnect after 5s on error
+                setTimeout(startGcloudAccountStream, 5000);
+            };
+        }
+
+        function renderModelFilterPills() {
+            const container = document.getElementById('model-pills-list');
+            container.innerHTML = '';
+
+            supportedModels.forEach(m => {
+                const btn = document.createElement('button');
+                btn.className = `model-pill ${m.key === selectedModelFilter ? 'active' : ''}`;
+                btn.innerHTML = `<span>${m.icon}</span> <span>${m.name}</span>`;
+                btn.onclick = () => {
+                    selectedModelFilter = m.key;
+                    renderModelFilterPills();
+                    renderAccounts(cachedAccounts);
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.style.borderColor = isError ? 'var(--danger)' : 'var(--primary)';
+            document.getElementById('toast-msg').innerText = msg;
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 4000);
+        }
+
+        function tickCountdown() {
+            if (countdownSeconds <= 0) return;
+            countdownSeconds--;
+            const hours = Math.floor(countdownSeconds / 3600);
+            const minutes = Math.floor((countdownSeconds % 3600) / 60);
+            const seconds = countdownSeconds % 60;
+            const str = `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
+            document.getElementById('global-countdown').innerText = str;
+        }
+
+        async function fetchAccounts() {
+            try {
+                const res = await fetch('/api/accounts');
+                const data = await res.json();
+
+                if (data.reset_info) {
+                    countdownSeconds = data.reset_info.seconds_remaining;
+                    document.getElementById('pt-current-time').innerText = `Pacific Time: ${data.reset_info.current_pt}`;
+                    document.getElementById('global-countdown').innerText = data.reset_info.countdown;
+                }
+
+                cachedAccounts = data.accounts || [];
+                renderAccounts(cachedAccounts);
+
+            } catch (err) {
+                showToast("Failed to fetch accounts: " + err.message, true);
+            }
+        }
+
+        function renderAccounts(accounts) {
+            const list = document.getElementById('accounts-list');
+            list.innerHTML = '';
+
+            let activeFound = false;
+
+            if (!accounts || accounts.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No accounts configured</h3>
+                        <p style="margin: 8px 0 16px;">Click "Sync gcloud" to auto-import your authenticated accounts or "+ Add Account" to link Gemini API keys.</p>
+                        <button class="btn btn-primary btn-sm" onclick="syncGcloud()">Sync Authenticated gcloud Accounts</button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Update top focus widget
+            const modelMeta = supportedModels.find(m => m.key === selectedModelFilter) || supportedModels[0];
+            document.getElementById('current-focused-model-title').innerText = `${modelMeta.icon} ${modelMeta.name}`;
+
+            accounts.forEach(acc => {
+                if (acc.is_active) {
+                    activeFound = true;
+                    document.getElementById('active-account-name').innerText = acc.name;
+                    document.getElementById('active-account-type').innerText = `${acc.type.toUpperCase()} • ${acc.identifier}`;
+                }
+
+                // Get model usage for currently selected filter
+                const usage = (acc.model_usages && acc.model_usages[selectedModelFilter]) || acc.primary_usage;
+
+                // Update spec info in top card if active account
+                if (acc.is_active) {
+                    document.getElementById('current-focused-model-spec').innerText = 
+                        `${usage.rpm_limit} RPM • ${usage.rpd_limit} RPD • Midnight PT Reset`;
+                }
+
+                const card = document.createElement('div');
+                card.className = `account-card ${acc.is_active ? 'active-account' : ''}`;
+
+                let typeLabel = 'OAuth';
+                let typeClass = 'type-gcloud';
+                if (acc.type === 'service_account') {
+                    typeLabel = 'Service Account';
+                    typeClass = 'type-service_account';
+                } else if (acc.type === 'gemini_api_key') {
+                    typeLabel = 'Gemini API Key';
+                    typeClass = 'type-gemini_api_key';
+                }
+
+                let statusBadgeClass = 'quota-status-healthy';
+                let statusBadgeText = '● Available';
+                if (usage.status === 'exhausted') {
+                    statusBadgeClass = 'quota-status-exhausted';
+                    statusBadgeText = '✕ 429 Exhausted';
+                } else if (usage.status === 'warning' || usage.used_pct >= 85) {
+                    statusBadgeClass = 'quota-status-warning';
+                    statusBadgeText = '⚠ Quota Low';
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <div class="card-top">
+                            <span class="type-badge ${typeClass}">${typeLabel}</span>
+                            <div class="status-pill">
+                                <div class="status-dot ${acc.is_active ? 'active' : ''}"></div>
+                                <span style="color: ${acc.is_active ? '#34d399' : '#9ca3af'}; font-size: 0.75rem;">
+                                    ${acc.is_active ? 'ACTIVE' : 'STANDBY'}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="account-name">${acc.name}</div>
+                        <div class="account-id">${acc.identifier}</div>
+
+                        <!-- Focused Model Quota Box -->
+                        <div class="quotas-box">
+                            <div class="model-quota-title">
+                                <span>${usage.model_name}</span>
+                                <span class="quota-status-badge ${statusBadgeClass}">${statusBadgeText}</span>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+                                <span>Daily Usage</span>
+                                <span style="font-weight: 600; color: #fff;">${usage.used_today} / ${usage.rpd_limit} requests</span>
+                            </div>
+
+                            <div class="progress-bar-wrap">
+                                <div class="progress-bar ${usage.status}" style="width: ${usage.used_pct}%;"></div>
+                            </div>
+
+                            <div class="quota-row">
+                                <span class="quota-label">Rate Limit (RPM)</span>
+                                <span class="quota-val">${usage.rpm_limit} req / min</span>
+                            </div>
+                            <div class="quota-row">
+                                <span class="quota-label">Token Throughput</span>
+                                <span class="quota-val">${(usage.tpm_limit).toLocaleString()} TPM</span>
+                            </div>
+                            <div class="quota-row">
+                                <span class="quota-label">Daily Reset In</span>
+                                <span class="quota-val" style="color: #34d399;">${acc.reset_eta}</span>
+                            </div>
+
+                            <!-- Quota Quick Actions -->
+                            <div class="usage-action-buttons">
+                                <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="updateUsage('${acc.id}', '${selectedModelFilter}', 'increment')">
+                                    +1 Req
+                                </button>
+                                <button class="btn btn-warning-action btn-sm" style="flex: 1;" onclick="updateUsage('${acc.id}', '${selectedModelFilter}', 'mark_exhausted')">
+                                    ⚠ Mark 429
+                                </button>
+                                <button class="btn btn-outline btn-sm" onclick="updateUsage('${acc.id}', '${selectedModelFilter}', 'reset')" title="Reset Usage">
+                                    ↺
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <button 
+                            class="btn ${acc.is_active ? 'btn-active' : 'btn-primary'} btn-sm" 
+                            style="flex: 1;"
+                            onclick="switchAccount('${acc.id}', '${acc.email}')" 
+                            ${acc.is_active ? 'disabled' : ''}
+                        >
+                            ${acc.is_active
+                                ? '<span style="display:inline-flex;align-items:center;gap:4px;"><span style="color:#34d399;">⬡</span> Active &amp; IDE Bound</span>'
+                                : '<span style="display:inline-flex;align-items:center;gap:4px;">⚡ Bind to IDE</span>'}
+                        </button>
+
+                        <button class="btn btn-outline btn-sm" title="Test Live Connection / Quota" onclick="testAccount('${acc.id}')">
+                            Ping
+                        </button>
+
+                        <button class="btn btn-outline btn-sm" style="color: #ef4444;" title="Remove" onclick="deleteAccount('${acc.id}')">
+                            &times;
+                        </button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+
+            if (!activeFound) {
+                document.getElementById('active-account-name').innerText = "None selected";
+                document.getElementById('active-account-type').innerText = "Click 'Set Active' on an account";
+            }
+        }
+
+        async function updateUsage(accountId, modelKey, action) {
+            try {
+                const res = await fetch('/api/accounts/usage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ account_id: accountId, model: modelKey, action: action })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`Updated usage for ${modelKey}: ${action}`);
+                    fetchAccounts();
+                } else {
+                    showToast(data.error || "Failed to update usage", true);
+                }
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        async function switchAccount(id, email) {
+            try {
+                const res = await fetch('/api/switch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ account_id: id, email: email })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast('⚡ ' + data.message);
+                    // Show IDE sync notification if steps were returned
+                    if (data.ide_sync && data.ide_sync.length > 0) {
+                        showIdeSyncPanel(data.ide_sync);
+                    }
+                    fetchAccounts();
+                } else {
+                    showToast(data.error || "Failed to switch account", true);
+                }
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        function showIdeSyncPanel(steps) {
+            // Remove old panel if present
+            const existing = document.getElementById('ide-sync-panel');
+            if (existing) existing.remove();
+
+            const panel = document.createElement('div');
+            panel.id = 'ide-sync-panel';
+            panel.style.cssText = [
+                'position:fixed', 'bottom:84px', 'right:24px', 'z-index:9999',
+                'background:linear-gradient(135deg,#0f172a,#1e293b)',
+                'border:1px solid #34d399', 'border-radius:12px',
+                'padding:16px 20px', 'min-width:320px', 'max-width:420px',
+                'box-shadow:0 8px 32px rgba(0,0,0,.5)',
+                'font-family:inherit', 'animation:slideIn .3s ease'
+            ].join(';');
+
+            const title = document.createElement('div');
+            title.style.cssText = 'font-size:.75rem;font-weight:700;color:#34d399;letter-spacing:.08em;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;';
+            title.innerHTML = `<span>⬡ IDE BINDING COMPLETE</span><button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:#64748b;cursor:pointer;font-size:1rem;">×</button>`;
+            panel.appendChild(title);
+
+            steps.forEach(step => {
+                const row = document.createElement('div');
+                row.style.cssText = 'display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:.78rem;color:#94a3b8;';
+                row.innerHTML = `<span style="color:#34d399;flex-shrink:0;">✓</span><span>${step}</span>`;
+                panel.appendChild(row);
+            });
+
+            const note = document.createElement('div');
+            note.style.cssText = 'margin-top:10px;padding-top:10px;border-top:1px solid #1e293b;font-size:.7rem;color:#475569;';
+            note.textContent = 'Open a new IDE terminal to pick up updated env vars.';
+            panel.appendChild(note);
+
+            document.body.appendChild(panel);
+            setTimeout(() => { if (panel.parentNode) panel.remove(); }, 8000);
+        }
+
+        async function syncGcloud() {
+            try {
+                showToast("Scanning gcloud credentials...");
+                const res = await fetch('/api/accounts/sync-gcloud', { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`Synced ${data.count} account(s) from gcloud!`);
+                    fetchAccounts();
+                }
+            } catch (err) {
+                showToast("Sync error: " + err.message, true);
+            }
+        }
+
+        async function testAccount(id) {
+            try {
+                showToast("Pinging account live...");
+                const res = await fetch('/api/accounts/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ account_id: id })
+                });
+                const data = await res.json();
+                if (data.healthy) {
+                    showToast(`✓ [${data.status}] ${data.message} (${data.latency_ms || 0}ms)`);
+                } else {
+                    showToast(`⚠ [${data.status}] ${data.message}`, true);
+                }
+            } catch (err) {
+                showToast("Test request failed: " + err.message, true);
+            }
+        }
+
+        async function deleteAccount(id) {
+            if (!confirm("Are you sure you want to remove this account from rotation?")) return;
+            try {
+                const res = await fetch(`/api/accounts/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.success) {
+                    showToast("Account removed");
+                    fetchAccounts();
+                }
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+
+        function openAddModal() {
+            document.getElementById('add-modal').classList.add('open');
+        }
+
+        function closeAddModal() {
+            document.getElementById('add-modal').classList.remove('open');
+            document.getElementById('add-account-form').reset();
+        }
+
+        function switchTab(type) {
+            document.getElementById('form-type').value = type;
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            document.getElementById('fields-api-key').style.display = (type === 'gemini_api_key') ? 'block' : 'none';
+            document.getElementById('fields-gcloud').style.display = (type === 'gcloud') ? 'block' : 'none';
+            document.getElementById('fields-sa').style.display = (type === 'service_account') ? 'block' : 'none';
+        }
+
+        async function handleAddAccount(e) {
+            e.preventDefault();
+            const type = document.getElementById('form-type').value;
+            const name = document.getElementById('form-name').value;
+            const model = document.getElementById('form-model').value;
+            const tier = document.getElementById('form-tier').value;
+
+            const payload = { type, name, model, tier };
+
+            if (type === 'gemini_api_key') {
+                payload.api_key = document.getElementById('form-api-key').value;
+            } else if (type === 'gcloud') {
+                payload.email = document.getElementById('form-email').value;
+            } else if (type === 'service_account') {
+                payload.key_file = document.getElementById('form-key-file').value;
+            }
+
+            try {
+                const res = await fetch('/api/accounts/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(`Account '${name}' added successfully!`);
+                    closeAddModal();
+                    fetchAccounts();
+                } else {
+                    showToast(data.error || "Failed to add account", true);
+                }
+            } catch (err) {
+                showToast(err.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

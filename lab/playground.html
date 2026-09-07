@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Lab — Interactive Playground</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --ink: #e2e8f0;
+            --dim: #94a3b8;
+            --acc: #38bdf8;
+            --ok: #4ade80;
+            --bad: #f87171;
+            --warn: #facc15;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        header {
+            padding: 24px 32px 8px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        h1 span {
+            color: var(--acc);
+        }
+
+        .sub {
+            color: var(--dim);
+            margin-top: 4px;
+        }
+
+        main {
+            padding: 16px 32px 48px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 18px 20px;
+        }
+
+        .card h2 {
+            margin: 0 0 4px;
+            font-size: 17px;
+        }
+
+        .card .hint {
+            color: var(--dim);
+            font-size: 12.5px;
+            margin: 0 0 12px;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 13px;
+            color: var(--dim);
+            display: block;
+            margin: 8px 0 2px;
+        }
+
+        input[type=range] {
+            width: 100%;
+        }
+
+        input[type=text],
+        textarea {
+            width: 100%;
+            background: #0b1220;
+            color: var(--ink);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-family: Consolas, monospace;
+            font-size: 13px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        button {
+            background: var(--acc);
+            color: #04121f;
+            border: 0;
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 6px 6px 0 0;
+        }
+
+        button.ghost {
+            background: #334155;
+            color: var(--ink);
+        }
+
+        .val {
+            color: var(--acc);
+            font-weight: 700;
+        }
+
+        .bar {
+            height: 22px;
+            background: #0b1220;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 6px;
+            position: relative;
+        }
+
+        .bar>div {
+            height: 100%;
+        }
+
+        .bar .mid {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #475569;
+        }
+
+        .stat {
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            background: #0b1220;
+            border-radius: 8px;
+            padding: 8px 10px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .chip {
+            padding: 3px 8px;
+            border-radius: 7px;
+            font-family: Consolas, monospace;
+            font-size: 12px;
+            color: #04121f;
+            font-weight: 700;
+        }
+
+        .grid3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .sc {
+            background: #0b1220;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 12.5px;
+        }
+
+        .sc b {
+            display: block;
+            margin-bottom: 3px;
+            color: var(--acc);
+        }
+
+        .sc .where {
+            color: var(--dim);
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .pill.ok {
+            background: #14351f;
+            color: var(--ok);
+        }
+
+        .pill.bad {
+            background: #3b1a1a;
+            color: var(--bad);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12.5px;
+            margin-top: 8px;
+        }
+
+        td,
+        th {
+            padding: 3px 6px;
+            border-bottom: 1px solid #334155;
+            text-align: left;
+            font-family: Consolas, monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>🧪 AI Lab — <span>Interactive Playground</span></h1>
+        <div class="sub">Companion to micrograd/ + tokenizer/ · everything below is the SAME code you built, running
+            live in your browser · no libraries</div>
+    </header>
+    <main>
+
+        <!-- ══════════ SCENARIO 1: UMBRELLA ══════════ -->
+        <div class="card">
+            <h2>☂ Scenario 1 — The Umbrella Neuron <span class="pill ok">live</span></h2>
+            <p class="hint">A trained neuron with FROZEN weights (w=[+2.0,−0.5,+1.0], b=−0.3) decides for you.
+                Real-world twin: any yes/no app feature (spam flags, credit pre-check).</p>
+            <label>Is it cloudy? <span class="val" id="v1">0.8</span></label>
+            <input type="range" id="x1" title="Is it cloudy" min="0" max="1" step="0.05" value="0.8">
+            <label>Is it summer? <span class="val" id="v2">0.7</span></label>
+            <input type="range" id="x2" title="Is it summer" min="0" max="1" step="0.05" value="0.7">
+            <label>Did it rain yesterday? <span class="val" id="v3">0.9</span></label>
+            <input type="range" id="x3" title="Did it rain yesterday" min="0" max="1" step="0.05" value="0.9">
+            <div class="bar">
+                <div id="gauge" style="width:50%;background:var(--acc)"></div>
+                <div class="mid"></div>
+            </div>
+            <div class="stat" id="umbOut"></div>
+        </div>
+
+        <!-- ══════════ SCENARIO 2: TRAIN LIVE ══════════ -->
+        <div class="card">
+            <h2>🏋 Scenario 2 — Train a Network LIVE <span class="pill ok">live</span></h2>
+            <p class="hint">Real task: learn 5 weather→umbrella examples (same as step3_full_network.py). 41 knobs,
+                hinge loss. Watch loss fall — then drag the learning rate and see the shower-knob effect.</p>
+            <label>Learning rate (step size) <span class="val" id="lrV">0.05</span></label>
+            <input type="range" id="lr" title="Learning rate" min="0.005" max="0.5" step="0.005" value="0.05">
+            <button id="b1">+1 step</button><button id="b10">+10 steps</button><button id="b100">+100</button>
+            <button class="ghost" id="reset">↺ reset weights</button>
+            <canvas id="chart" width="440" height="120"
+                style="width:100%;background:#0b1220;border-radius:8px;margin-top:10px"></canvas>
+            <div class="stat" id="trainStat"></div>
+            <table id="predTable"></table>
+        </div>
+
+        <!-- ══════════ SCENARIO 3: TOKENIZER LAB ══════════ -->
+        <div class="card full">
+            <h2>🔢 Scenario 3 — Tokenizer Lab + API Cost Calculator <span class="pill ok">live</span></h2>
+            <p class="hint">Real task: this is literally how ChatGPT bills you — you pay per TOKEN, not per word. Train
+                your own BPE on the corpus below, then type anything.</p>
+            <div class="grid3">
+                <div>
+                    <label>Training corpus (edit me!)</label>
+                    <textarea title="Training corpus"
+                        id="corpus">the cat sat on the mat. the cat saw the dog. the dog ran to the cat. the cat and the dog sat. we learn to build ai from scratch. we learn to code. we build to learn. the more we build, the more we learn. </textarea>
+                    <label>Vocabulary size <span class="val" id="vsV">300</span> <span style="color:#64748b">(256 bytes
+                            + merges)</span></label>
+                    <input type="range" id="vs" title="Vocabulary size" min="260" max="500" step="10" value="300">
+                    <button id="trainTok">⚡ Train tokenizer</button>
+                    <div class="stat" id="mergeLog">not trained yet</div>
+                </div>
+                <div style="grid-column:span 2">
+                    <label>Type any text to tokenize (live)</label>
+                    <input type="text" id="testText" title="Text to tokenize" value="the cat sat on the mat."
+                        oninput="renderTokens()">
+                    <div class="chips" id="chips"></div>
+                    <div class="stat" id="tokStat"></div>
+                    <div class="stat" id="costStat" style="border:1px solid #334155"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════ REAL-WORLD MAP ══════════ -->
+        <div class="card full">
+            <h2>🌍 Where You Just Used These Ideas In The Real World</h2>
+            <p class="hint">Every card = a product you use daily, and the exact concept from phases 1–2 that powers it.
+            </p>
+            <div class="grid3">
+                <div class="sc"><b>📧 Spam filter</b>Neuron + hinge loss: features ("free money", links) → spam score.
+                    Gmail's first line of defense is exactly this shape.<div class="where">→ Scenario 2 (train live)
+                    </div>
+                </div>
+                <div class="sc"><b>🏠 House price estimate</b>MSE regression: size/location → price. Zillow-style
+                    estimators start here.<div class="where">→ scenarios_tester.py #2</div>
+                </div>
+                <div class="sc"><b>☂ Rule-of-thumb apps</b>Frozen-weight neuron = any instant yes/no decision (umbrella,
+                    outfit, cancel subscription?).<div class="where">→ Scenario 1 (live)</div>
+                </div>
+                <div class="sc"><b>💬 ChatGPT billing</b>You pay per TOKEN. Our lab counts tokens of your message
+                    exactly like the API meter does.<div class="where">→ Scenario 3 (live)</div>
+                </div>
+                <div class="sc"><b>⌨️ Autocomplete</b>Common chunks become single tokens → the model predicts in bigger,
+                    smarter steps.<div class="where">→ tokenizer/step2</div>
+                </div>
+                <div class="sc"><b>🌐 Any language, no crashes</b>Byte-level BPE: emoji, Hindi, code — nothing is
+                    "unknown". Worst case = raw bytes.<div class="where">→ tokenizer/step3 (6/6 PASS)</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <script>
+        /* ═══════════ micrograd, ported to JS (same 4 backward rules) ═══════════ */
+        class V {
+            constructor(data, children = []) { this.data = data; this.grad = 0; this.children = children; this.back = () => { }; }
+            static w(x) { return x instanceof V ? x : new V(x); }
+            add(o) {
+                o = V.w(o); const out = new V(this.data + o.data, [this, o]);
+                out.back = () => { this.grad += out.grad; o.grad += out.grad }; return out;
+            }
+            mul(o) {
+                o = V.w(o); const out = new V(this.data * o.data, [this, o]);
+                out.back = () => { this.grad += out.grad * o.data; o.grad += out.grad * this.data }; return out;
+            }
+            pow(n) {
+                const out = new V(Math.pow(this.data, n), [this]);
+                out.back = () => { this.grad += out.grad * n * Math.pow(this.data, n - 1) }; return out;
+            }
+            tanh() {
+                const t = Math.tanh(this.data); const out = new V(t, [this]);
+                out.back = () => { this.grad += out.grad * (1 - t * t) }; return out;
+            }
+            relu() {
+                const out = new V(Math.max(0, this.data), [this]);
+                out.back = () => { this.grad += out.grad * (this.data > 0 ? 1 : 0) }; return out;
+            }
+            neg() { return this.mul(-1); } sub(o) { return this.add(o.neg()); }
+            backward() {
+                const topo = [], seen = new Set();
+                const visit = n => { if (!seen.has(n)) { seen.add(n); n.children.forEach(visit); topo.push(n); } };
+                visit(this); this.grad = 1;
+                for (let i = topo.length - 1; i >= 0; i--) topo[i].back();
+            }
+        }
+        class Neuron {
+            constructor(nin, act = 'tanh') {
+                this.w = []; for (let i = 0; i < nin; i++)this.w.push(new V(Math.random() * 2 - 1));
+                this.b = new V(0); this.act = act;
+            }
+            call(x) {
+                let d = new V(0); this.w.forEach((wi, i) => d = d.mul(1).add(wi.mul(x[i]))); d = d.add(this.b);
+                return this.act === 'tanh' ? d.tanh() : this.act === 'relu' ? d.relu() : d;
+            }
+            params() { return [...this.w, this.b]; }
+        }
+        class Layer {
+            constructor(nin, n, act = 'tanh') { this.neurons = []; for (let i = 0; i < n; i++)this.neurons.push(new Neuron(nin, act)); }
+            call(x) { const out = this.neurons.map(n => n.call(x)); return out.length === 1 ? out[0] : out; }
+            params() { return this.neurons.flatMap(n => n.params()); }
+        }
+        class MLP {
+            constructor(nin, sizes) {
+                const all = [nin, ...sizes]; this.layers = [];
+                sizes.forEach((s, i) => this.layers.push(new Layer(all[i], s, i === sizes.length - 1 ? 'linear' : 'tanh')));
+            }
+            call(x) { this.layers.forEach(l => x = l.call(x)); return x; }
+            params() { return this.layers.flatMap(l => l.params()); }
+            zeroGrad() { this.params().forEach(p => p.grad = 0); }
+        }
+
+        /* ═══════════ SCENARIO 1: umbrella (frozen weights) ═══════════ */
+        const UW = [2.0, -0.5, 1.0], UB = -0.3;
+        function umb(x1, x2, x3) { return Math.tanh(x1 * UW[0] + x2 * UW[1] + x3 * UW[2] + UB); }
+        function renderUmbrella() {
+            const x1 = +x1s.value, x2 = +x2s.value, x3 = +x3s.value;
+            v1.textContent = x1; v2.textContent = x2; v3.textContent = x3;
+            const o = umb(x1, x2, x3), pct = (o + 1) / 2 * 100;
+            gauge.style.width = pct + '%';
+            gauge.style.background = o > 0.3 ? 'var(--ok)' : o < -0.3 ? 'var(--bad)' : 'var(--warn)';
+            const verdict = o > 0.3 ? '☂ BRING THE UMBRELLA' : o < -0.3 ? '😎 leave it home' : '🤔 borderline… your call';
+            umbOut.textContent = `tanh(${(x1 * UW[0] + x2 * UW[1] + x3 * UW[2] + UB).toFixed(2)}) = ${o.toFixed(3)}   →   ${verdict}`;
+        }
+        ['x1', 'x2', 'x3'].forEach(id => { const el = document.getElementById(id); el.id = el.id; el.oninput = renderUmbrella; });
+        const x1s = document.getElementById('x1'), x2s = document.getElementById('x2'), x3s = document.getElementById('x3');
+        renderUmbrella();
+
+        /* ═══════════ SCENARIO 2: train live ═══════════ */
+        const X = [[2, 3, -1], [3, -1, .5], [.5, 1, 1], [1, 1, -1], [0, 0, 0]].map(r => r.map(v => v / 3)); // normalized
+        const Y = [1, -1, 1, -1, 1];
+        let model, step = 0; const losses = [];
+        function hinge(model) {
+            const preds = X.map(x => model.call(x));
+            let loss = preds[0].mul(0);
+            preds.forEach((p, i) => { loss = loss.add(new V(1).sub(new V(Y[i]).mul(p)).relu()); });
+            loss = loss.mul(1 / X.length);
+            let l2 = new V(0); model.params().forEach(p => l2 = l2.add(p.mul(p)));
+            return { loss: loss.add(l2.mul(0.0001)), preds };
+        }
+        function freshModel() { model = new MLP(3, [4, 4, 1]); step = 0; losses.length = 0; }
+        function doSteps(n) {
+            const lr = +document.getElementById('lr').value;
+            for (let i = 0; i < n; i++) {
+                const { loss, preds } = hinge(model);
+                model.zeroGrad(); loss.backward();
+                model.params().forEach(p => p.data -= lr * p.grad);
+                step++; losses.push(loss.data);
+                if (i === n - 1) lastPreds = preds;
+            }
+            drawChart(); renderTrain();
+        }
+        let lastPreds = null;
+        function renderTrain() {
+            const { loss, preds } = hinge(model);
+            const acc = preds.filter((p, i) => (p.data > 0) === (Y[i] > 0)).length;
+            trainStat.textContent = `step ${step}   loss ${loss.data.toFixed(4)}   accuracy ${acc}/${Y.length}`;
+            let rows = '<tr><th>input (÷3)</th><th>prediction</th><th>want</th><th></th></tr>';
+            preds.forEach((p, i) => {
+                const ok = (p.data > 0) === (Y[i] > 0);
+                rows += `<tr><td>[${X[i].join(', ')}]</td><td>${p.data >= 0 ? '+' : ''}${p.data.toFixed(2)}</td><td>${Y[i] > 0 ? '+1' : '-1'}</td><td>${ok ? '✅' : '❌'}</td></tr>`;
+            });
+            predTable.innerHTML = rows;
+        }
+        function drawChart() {
+            const c = document.getElementById('chart'), ctx = c.getContext('2d');
+            ctx.clearRect(0, 0, c.width, c.height);
+            if (losses.length < 2) return;
+            const mx = Math.max(...losses, 1);
+            ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2; ctx.beginPath();
+            losses.forEach((l, i) => {
+                const x = i / (losses.length - 1) * (c.width - 16) + 8, y = c.height - 10 - (l / mx) * (c.height - 24);
+                i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+            });
+            ctx.stroke();
+        }
+        document.getElementById('lr').oninput = e => lrV.textContent = (+e.target.value).toFixed(3);
+        document.getElementById('b1').onclick = () => doSteps(1);
+        document.getElementById('b10').onclick = () => doSteps(10);
+        document.getElementById('b100').onclick = () => doSteps(100);
+        document.getElementById('reset').onclick = () => { freshModel(); drawChart(); renderTrain(); };
+        freshModel(); renderTrain();
+
+        /* ═══════════ SCENARIO 3: BPE tokenizer, ported to JS ═══════════ */
+        function countPairs(ids) {
+            const m = new Map();
+            for (let i = 0; i < ids.length - 1; i++) { const p = ids[i] + ',' + ids[i + 1]; m.set(p, (m.get(p) || 0) + 1); } return m;
+        }
+        function mergeIds(ids, pair, idx) {
+            const [a, b] = pair.split(',').map(Number); const out = []; let i = 0;
+            while (i < ids.length) { if (i < ids.length - 1 && ids[i] === a && ids[i + 1] === b) { out.push(idx); i += 2; } else { out.push(ids[i]); i++; } }
+            return out;
+        }
+        class BPE {
+            constructor() { this.merges = {}; this.vocab = {}; }
+            train(text, vocabSize) {
+                this.merges = {}; this.vocab = {};
+                for (let i = 0; i < 256; i++)this.vocab[i] = [i];
+                let ids = [...new TextEncoder().encode(text)];
+                const logLines = [];
+                for (let i = 0; i < vocabSize - 256; i++) {
+                    const stats = countPairs(ids); if (!stats.size) break;
+                    let best = null, bc = -1; for (const [p, c] of stats) if (c > bc) { bc = c; best = p; }
+                    const idx = 256 + i; ids = mergeIds(ids, best, idx);
+                    const [a, b] = best.split(',').map(Number);
+                    this.merges[best] = idx; this.vocab[idx] = [...this.vocab[a], ...this.vocab[b]];
+                    if (logLines.length < 6) logLines.push(`merge ${i + 1}: (${a},${b})→${idx}  "${String.fromCharCode(...this.vocab[idx]).replace(/\n/g, '⏎')}"  (${bc}x)`);
+                }
+                this.log = logLines.join('\n') || 'no merges learned';
+                return ids;
+            }
+            encode(text) {
+                let ids = [...new TextEncoder().encode(text)];
+                while (ids.length >= 2) {
+                    const stats = countPairs(ids);
+                    let best = null, rank = Infinity;
+                    for (const p of stats.keys()) { const r = this.merges[p] ?? Infinity; if (r < rank) { rank = r; best = p; } }
+                    if (best === null || !(best in this.merges)) break;
+                    ids = mergeIds(ids, best, this.merges[best]);
+                }
+                return ids;
+            }
+            decode(ids) {
+                let bytes = []; ids.forEach(i => bytes.push(...(this.vocab[i] || [i])));
+                return new TextDecoder('utf-8').decode(new Uint8Array(bytes));
+            }
+        }
+        const tok = new BPE();
+        function trainTok() {
+            tok.train(document.getElementById('corpus').value, +document.getElementById('vs').value);
+            mergeLog.textContent = tok.log;
+            renderTokens();
+        }
+        function renderTokens() {
+            const t = document.getElementById('testText').value;
+            const untrained = !tok.vocab[256];
+            const ids = tok.encode(t);
+            chips.innerHTML = '';
+            ids.forEach(i => {
+                const s = document.createElement('span');
+                s.className = 'chip';
+                s.title = 'id ' + i;
+                s.style.background = `hsl(${(i * 47) % 360},80%,70%)`;
+                s.textContent = (tok.vocab[i] ? String.fromCharCode(...tok.vocab[i]) : '?').replace(/ /g, '␣');
+                chips.appendChild(s);
+            });
+            const bytes = t.length ? new TextEncoder().encode(t).length : 0;
+            const round = tok.decode(ids) === t;
+            const cost = ids.length * 0.15 / 1e6;            // $0.15 per 1M tokens (GPT-4o-mini input rate)
+            tokStat.textContent = (untrained ? '(untrained → raw-byte mode) ' : '') +
+                `chars ${t.length} · bytes ${bytes} · tokens ${ids.length}` +
+                (bytes ? ` · compression ${(bytes / ids.length).toFixed(2)}× · roundtrip ${round ? '✅ exact' : '❌ BROKEN'}` : '');
+            costStat.textContent = `💰 API cost check (GPT-4o-mini input ≈ $0.15 / 1M tokens):
+this message = ${ids.length} tokens ≈ $${cost.toFixed(8)}
+that's ≈ ${Math.ceil(1e6 / Math.max(ids.length, 1)).toLocaleString()} messages like this per $1.00`;
+        }
+        document.getElementById('trainTok').onclick = trainTok;
+        document.getElementById('vs').oninput = e => vsV.textContent = e.target.value;
+        renderTokens();
+    </script>
+</body>
+
+</html>

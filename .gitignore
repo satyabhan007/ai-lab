@@ -1,0 +1,9 @@
+# Ignore JetBrains IDE files
+.idea/
+
+# Ignore Python cache
+__pycache__/
+
+# Ignore sensitive configuration and key files
+accounts.json
+*.json
