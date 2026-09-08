@@ -1,9 +1,31 @@
-# Ignore JetBrains IDE files
-.idea/
-
-# Ignore Python cache
+# AI-ML Python / Git ignores
 __pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+env/
 
-# Ignore sensitive configuration and key files
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local config
+.env
+*.log
+
+# Keep accounts.json out of version control (contains sensitive data)
 accounts.json
-*.json

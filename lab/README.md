@@ -66,19 +66,23 @@ Exit code 0 when everything passes (1 on failure), so you can wire it into CI la
 
 ## 5. Running the Lab on GitHub (2 superpowers)
 
-Once this repo is pushed to GitHub, you get both testers **hosted and automated for free**:
+Both testers are already **hosted and automated for free** on GitHub:
 
-### A. The visual playground becomes a live website (GitHub Pages)
+### A. The visual playground is a live website (GitHub Pages)
 
-1. Push the repo (commands below).
-2. On GitHub: **Settings → Pages → Build and deployment → Source: `GitHub Actions`**.
-3. The included workflow `.github/workflows/deploy-pages.yml` deploys `lab/` automatically
-   on every push. Your playground goes live at:
+| Where | URL |
+|---|---|
+| Landing page | https://satyabhan007.github.io/AI-ML/ |
+| Interactive playground | https://satyabhan007.github.io/AI-ML/lab/playground.html |
 
-   `https://<your-username>.github.io/<repo-name>/playground.html`
+How it works:
 
-   Share that link — anyone can drag the umbrella sliders and train your network,
-   no install needed.
+1. The workflow `.github/workflows/deploy-pages.yml` deploys the **entire repository
+   root** (landing page + assets + lab) automatically on every push to `main`.
+2. One-time setup (already done): **Settings → Pages → Build and deployment →
+   Source: `GitHub Actions`**.
+3. Every later push redeploys the site. Share the link — anyone can drag the
+   umbrella sliders and train your network, no install needed.
 
 ### B. The scenarios tester runs itself on every push (GitHub Actions)
 
@@ -88,28 +92,34 @@ Once this repo is pushed to GitHub, you get both testers **hosted and automated 
 - re-runs all 6 micrograd + tokenizer lessons as regression checks
 - green ✅ = everything still passes; red ❌ = you broke something (and CI tells you what)
 
-See results in the repo's **Actions** tab. Badge for your README:
+See results in the [Actions tab](https://github.com/satyabhan007/AI-ML/actions).
+The root README already carries the badge:
 
 ```markdown
-![AI Lab Tests](https://github.com/<your-username>/<repo-name>/actions/workflows/lab-tests.yml/badge.svg)
+![AI Lab Tests](https://github.com/satyabhan007/AI-ML/actions/workflows/lab-tests.yml/badge.svg)
 ```
 
-### Push it (first time)
+### Keeping GitHub in sync (auto-sync watcher)
+
+The workspace folder (`account_rotator/`) is the source of truth. The background
+watcher `watch_and_push.ps1` polls `micrograd/`, `tokenizer/`, `lab/`, `assets/`,
+`.github/` and the root site files (`index.html`, `404.html`, `.gitignore`) every
+2 seconds. On any save it copies the changed file into the local `AI-ML` clone,
+commits and pushes — which redeploys Pages and re-runs CI automatically.
 
 ```powershell
-cd "d:\test\account rotate\account_rotator"
-git init
-git add .
-git commit -m "AI Lab: micrograd + tokenizer + visual playground + scenario tests"
-
-# Option 1 — GitHub CLI (easiest; creates the remote repo too):
-gh repo create ai-lab --public --source=. --push
-
-# Option 2 — manual: create an empty repo on github.com, then:
-git branch -M main
-git remote add origin https://github.com/<your-username>/<repo-name>.git
-git push -u origin main
+# start the watcher (leave the window open while you work)
+powershell -ExecutionPolicy Bypass -File "D:\test\account rotate\account_rotator\watch_and_push.ps1"
 ```
 
-After the first push: enable Pages (step A2 above) once — every later `git push`
-redeploys the site and re-runs the tests automatically.
+Manual push (if the watcher isn't running):
+
+```powershell
+cd "D:\test\account rotate\AI-ML"
+git add -A
+git commit -m "update AI-ML content"
+git push origin main
+```
+
+> One-time setup recap: `gh repo create AI-ML --public` → push → enable
+> **Settings → Pages → Source: GitHub Actions** once. Every later push is automatic.

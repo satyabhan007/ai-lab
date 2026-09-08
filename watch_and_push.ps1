@@ -1,6 +1,6 @@
 # ============================================================
 #  watch_and_push.ps1 — Persistent AI-ML Auto-Sync Watcher
-#  Watches: micrograd, tokenizer, lab
+#  Watches: micrograd, tokenizer, lab, assets, .github, root files
 #  Target:  https://github.com/satyabhan007/AI-ML
 #  Repo:    D:\test\account rotate\AI-ML
 # ============================================================
@@ -12,8 +12,11 @@ $LogFile       = "$RepoDir\auto_sync.log"
 $DebounceSec   = 3
 
 # Subdirectories to watch relative to workspace
-$WatchFolders  = @("micrograd", "tokenizer", "lab")
-$WatchedExts   = @(".md", ".py", ".html", ".css", ".js", ".json")
+$WatchFolders  = @("micrograd", "tokenizer", "lab", "assets", ".github")
+$WatchedExts   = @(".md", ".py", ".html", ".css", ".js", ".json", ".yml")
+
+# Root-level files to watch (directly in workspace root)
+$WatchRootFiles = @("index.html", "404.html", ".gitignore")
 
 function Log-Message([string]$msg, [string]$color = "White") {
     $ts = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
@@ -38,20 +41,25 @@ function Sync-And-Push([string]$SourcePath) {
     if (-not (Test-Path $SourcePath)) { return }
     $relPath = $SourcePath.Substring($WorkspaceRoot.Length).TrimStart("\/")
     $parts = $relPath -split "[\\/]"
-    $folder = $parts[0]
-    $fileName = Split-Path -Leaf $SourcePath
+        $fileName = Split-Path -Leaf $SourcePath
 
     Log-Message "[SYNC] Detected change in $relPath" "Magenta"
 
-    # Destination folder in AI-ML
-    $destFolder = "$RepoDir\$folder"
+        # Determine the relative directory path (everything except the filename)
+    if ($parts.Count -gt 1) {
+        $relDir = ($parts[0..($parts.Count - 2)]) -join "\"
+        $destFolder = "$RepoDir\$relDir"
+    } else {
+        $destFolder = $RepoDir
+    }
+    # File is in a subdirectory (e.g., micrograd/engine.py, assets/css/style.css)
     if (-not (Test-Path $destFolder)) {
         New-Item -ItemType Directory -Path $destFolder -Force | Out-Null
     }
     Copy-Item -Path $SourcePath -Destination "$destFolder\$fileName" -Force
 
     # If it's a markdown explainer from micrograd, also mirror to repo root
-    if ($folder -eq "micrograd" -and $fileName.EndsWith(".md")) {
+        if ($parts[0] -eq "micrograd" -and $fileName.EndsWith(".md")) {
         Copy-Item -Path $SourcePath -Destination "$RepoDir\$fileName" -Force
     }
 
@@ -92,6 +100,13 @@ function Get-TrackedFiles {
             } | ForEach-Object {
                 $files += $_
             }
+        }
+    }
+    # Also track root-level files
+    foreach ($f in $WatchRootFiles) {
+        $filePath = "$WorkspaceRoot\$f"
+        if (Test-Path $filePath) {
+            $files += Get-Item $filePath
         }
     }
     return $files

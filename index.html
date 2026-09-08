@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-ML — From-Scratch AI Engineering Curriculum</title>
+    <meta name="description" content="Hands-on, zero-black-box AI/ML implementations from scratch in pure Python. Build micrograd autograd, BPE tokenizers, and neural networks.">
+    <meta name="color-scheme" content="dark">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%233b82f6'>🧠</text></svg>">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+    <!-- Navigation -->
+    <header class="site-header">
+        <div class="container nav-container">
+            <div class="brand">
+                <div class="brand-logo">🧠</div>
+                <div>
+                    <div class="brand-text">AI-ML</div>
+                    <div class="brand-sub">From-Scratch Engineering</div>
+                </div>
+            </div>
+            <nav class="nav-links">
+                <a href="#curriculum">Curriculum</a>
+                <a href="#playground">Playground</a>
+                <a href="#docs">Documentation</a>
+                <a href="#getting-started">Getting Started</a>
+            </nav>
+            <div class="nav-actions">
+                <a href="lab/playground.html" class="btn btn-outline btn-sm">Open Lab</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero reveal">
+        <div class="container">
+            <h1>Build AI <span style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">From Scratch</span></h1>
+            <p class="subtitle">
+                Hands-on, zero-black-box implementations of modern AI and Machine Learning
+                fundamentals — autograd engines, BPE tokenizers, neural networks — built
+                entirely in pure Python.
+            </p>
+            <div class="hero-actions">
+                <a href="lab/playground.html" class="btn btn-primary">Launch Interactive Playground</a>
+                <a href="#getting-started" class="btn btn-outline">Quick Start Guide</a>
+            </div>
+            <div class="badge-row">
+                <span class="badge badge-green">✅ 12/12 Tests Passing</span>
+                <span class="badge badge-primary">🐍 Pure Python 3.13</span>
+                <span class="badge badge-purple">⚡ Zero Dependencies</span>
+            </div>
+            <div class="scroll-indicator">
+                <span>Scroll to explore</span>
+                <span class="scroll-dot"></span><span class="scroll-dot"></span><span class="scroll-dot"></span>
+            </div>
+        </div>
+    </section>
+
+                <!-- Stats Bar -->
+    <section class="section-sm reveal">
+        <div class="container">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-value">3</div>
+                    <div class="stat-label">Learning Phases</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Real-World Scenarios</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Test Pass Rate</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">2200+</div>
+                    <div class="stat-label">Lines of Docs</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Curriculum -->
+    <section class="section reveal" id="curriculum">
+        <div class="container">
+            <h2 class="section-title">Three Phases, One Full Stack</h2>
+            <p class="section-subtitle">
+                Each phase builds on the previous one — from the math inside a single neuron
+                to production-ready AI concepts. All code is <strong>zero-black-box</strong>.
+            </p>
+            <div class="grid-3">
+                <div class="card phase-card" data-phase="Phase 1">
+                    <div style="display:flex;gap:16px;align-items:flex-start;">
+                        <div class="phase-number">1</div>
+                        <div>
+                            <div class="card-title">Micrograd — Autograd Engine</div>
+                            <div class="card-meta">Backpropagation • Neural Networks • Gradients</div>
+                        </div>
+                    </div>
+                    <p style="margin:20px 0;color:var(--text-muted);font-size:0.9rem;">
+                        Build an automatic differentiation engine from 200 lines. Understand how
+                        gradients flow backward through a computation graph, then build a full MLP
+                        that reaches 100% accuracy on a toy dataset.
+                    </p>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <a href="micrograd/step1_just_values.py" class="btn btn-sm btn-outline">Step 1</a>
+                        <a href="micrograd/step2_one_neuron.py" class="btn btn-sm btn-outline">Step 2</a>
+                        <a href="micrograd/step3_full_network.py" class="btn btn-sm btn-outline">Step 3</a>
+                        <a href="micrograd/BEGINNER_GUIDE.md" class="btn btn-sm btn-ghost">Guide</a>
+                    </div>
+                </div>
+                <div class="card phase-card" data-phase="Phase 2">
+                    <div style="display:flex;gap:16px;align-items:flex-start;">
+                        <div class="phase-number">2</div>
+                        <div>
+                            <div class="card-title">BPE Tokenizer</div>
+                            <div class="card-meta">Text → Numbers • Compression • UTF-8</div>
+                        </div>
+                    </div>
+                    <p style="margin:20px 0;color:var(--text-muted);font-size:0.9rem;">
+                        Build a Byte-Pair Encoding tokenizer from scratch. Understand how text
+                        becomes numbers, how tokens carry meaning, and why fewer tokens = lower bills.
+                    </p>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <a href="tokenizer/step1_why_tokenize.py" class="btn btn-sm btn-outline">Step 1</a>
+                        <a href="tokenizer/step2_train_bpe.py" class="btn btn-sm btn-outline">Step 2</a>
+                        <a href="tokenizer/step3_encode_decode.py" class="btn btn-sm btn-outline">Step 3</a>
+                        <a href="tokenizer/BEGINNER_GUIDE.md" class="btn btn-sm btn-ghost">Guide</a>
+                    </div>
+                </div>
+                <div class="card phase-card" data-phase="Phase 3">
+                    <div style="display:flex;gap:16px;align-items:flex-start;">
+                        <div class="phase-number">3</div>
+                        <div>
+                            <div class="card-title">Interactive Lab</div>
+                            <div class="card-meta">Visual Playground • Scenario Tests</div>
+                        </div>
+                    </div>
+                    <p style="margin:20px 0;color:var(--text-muted);font-size:0.9rem;">
+                        Everything made <em>touchable</em>. A browser playground with live neuron
+                        sliders, BPE visualizer, cost calculator, and 5 real-world scenario tests.
+                    </p>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <a href="lab/playground.html" class="btn btn-sm btn-primary">Open Playground</a>
+                        <a href="lab/README.md" class="btn btn-sm btn-ghost">Lab Guide</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        </section>
+
+    <!-- Getting Started -->
+    <section class="section reveal" id="getting-started">
+        <div class="container">
+            <h2 class="section-title">7-Minute Quick Start</h2>
+            <p class="section-subtitle">
+                No setup needed — everything runs locally with just Python 3.13. Follow these steps:
+            </p>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot">1</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Clone the repository</div>
+                        <div class="timeline-desc">Get the full curriculum on your machine.</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot">2</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Run the scenarios tester</div>
+                        <div class="timeline-desc">
+                            Verifies all 12 real-world scenario tests pass in under 2 seconds.
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot">3</div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Open the interactive playground</div>
+                        <div class="timeline-desc">
+                            Double-click <code class="inline">lab/playground.html</code> — no server needed.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align:center;margin-top:32px;">
+                <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+                    <a href="https://github.com/satyabhan007/AI-ML" class="btn btn-primary" target="_blank" rel="noopener">
+                        <span>↓</span> Clone on GitHub
+                    </a>
+                    <a href="#docs" class="btn btn-outline">Read the Guides</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Documentation -->
+    <section class="section section-alt reveal" id="docs">
+        <div class="container">
+            <h2 class="section-title">Documentation Index</h2>
+            <p class="section-subtitle">
+                Every concept is explained three ways — plain English, deep math, and visual diagrams.
+            </p>
+            <div class="card">
+                <table class="doc-table">
+                    <thead>
+                        <tr>
+                            <th>Guide</th>
+                            <th>Topic</th>
+                            <th>What You Get</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a href="micrograd/REPORT.md">REPORT.md</a></td>
+                            <td>Autograd & Backprop</td>
+                            <td>1800+ line reference manual — engine internals, math proofs, examples</td>
+                        </tr>
+                        <tr>
+                            <td><a href="micrograd/BEGINNER_GUIDE.md">BEGINNER_GUIDE.md</a></td>
+                            <td>Neural Nets 101</td>
+                            <td>Plain-English analogies — shower thermostat, soup tasting, golf in fog</td>
+                        </tr>
+                        <tr>
+                            <td><a href="micrograd/VISUAL_GUIDE.md">VISUAL_GUIDE.md</a></td>
+                            <td>Graph Walkthroughs</td>
+                            <td>ASCII & visual diagrams of DAG backward passes and chain rule flow</td>
+                        </tr>
+                        <tr>
+                            <td><a href="micrograd/MINDMAPS.md">MINDMAPS.md</a></td>
+                            <td>Conceptual Maps</td>
+                            <td>Memory aids and system maps for rapid revision</td>
+                        </tr>
+                        <tr>
+                            <td><a href="micrograd/DEEP_EXPLANATION.md">DEEP_EXPLANATION.md</a></td>
+                            <td>Line-by-Line Math</td>
+                            <td>Every formula broken down with worked numbers and exercises</td>
+                        </tr>
+                        <tr>
+                            <td><a href="tokenizer/BEGINNER_GUIDE.md">Tokenizer Guide</a></td>
+                            <td>BPE Tokenization</td>
+                            <td>LEGO analogy, merge trees, compression ratios, UTF-8 handling</td>
+                        </tr>
+                        <tr>
+                            <td><a href="micrograd/AI_ENGINEERING_NOTES.md">AI_ENGINEERING_NOTES.md</a></td>
+                            <td>Learning Roadmap</td>
+                            <td>20+ project roadmap from autograd to LLMs and AI agents</td>
+                                                </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer reveal">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <div class="brand-logo">🧠</div>
+                    <div class="brand-text">AI-ML Curriculum</div>
+                </div>
+                <p class="footer-text">
+                    Built with ❤️ by Satya. A self-contained, zero-dependency curriculum for learning AI
+                    engineering from first principles. Every line of code is designed to be understood —
+                    no black boxes, no hidden magic.
+                </p>
+                <div class="social-links">
+                    <a href="https://github.com/satyabhan007/AI-ML" class="social-link" target="_blank" rel="noopener" title="GitHub">
+                        <span>💻</span>
+                    </a>
+                    <a href="https://www.linkedin.com/in/satyarao" class="social-link" target="_blank" rel="noopener" title="LinkedIn">
+                        <span>💼</span>
+                    </a>
+                </div>
+            </div>
+            <div class="copyright">
+                <span>© <span id="current-year">2026</span> AI-ML Curriculum. MIT License.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

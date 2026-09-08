@@ -1,0 +1,12 @@
+{
+  "name": "google-account-rotator",
+  "version": "1.0.0",
+  "description": "A local app to check Google AI Platform quotas and suggest an account.",
+  "main": "main.py",
+  "scripts": {
+    "check-accounts": "python main.py"
+  },
+  "keywords": ["google", "gcloud", "quota", "ai-platform"],
+  "author": "",
+  "license": "MIT"
+}

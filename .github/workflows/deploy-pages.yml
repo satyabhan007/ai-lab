@@ -1,8 +1,8 @@
-# Deploys the AI Lab visual playground to GitHub Pages on every push to main.
+# Deploys the AI-ML GitHub Pages site from the repository root.
 # After the first successful run, enable: Settings → Pages → Source: "GitHub Actions".
-# Your lab will then be live at: https://<username>.github.io/<repo>/lab/playground.html
+# Your site will be live at: https://<username>.github.io/<repo>/
 
-name: Deploy Lab to GitHub Pages
+name: Deploy AI-ML to GitHub Pages
 
 on:
   push:
@@ -31,10 +31,10 @@ jobs:
       - name: Set up Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload lab folder as site
+      - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./lab
+          path: .
 
       - name: Deploy to GitHub Pages
         id: deployment
