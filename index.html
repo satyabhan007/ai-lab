@@ -6,6 +6,7 @@
     <title>AI-ML — From-Scratch AI Engineering Curriculum</title>
     <meta name="description" content="Hands-on, zero-black-box AI/ML implementations from scratch in pure Python. Build micrograd autograd, BPE tokenizers, and neural networks.">
     <meta name="color-scheme" content="dark">
+    <script>document.documentElement.classList.add('js');</script>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%233b82f6'>🧠</text></svg>">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -59,7 +60,7 @@
         </div>
     </section>
 
-                <!-- Stats Bar -->
+    <!-- Stats Bar -->
     <section class="section-sm reveal">
         <div class="container">
             <div class="stats-bar">
@@ -152,7 +153,61 @@
         </div>
     </section>
 
-        </section>
+    <!-- Playground -->
+    <section class="section section-alt reveal" id="playground">
+        <div class="container">
+            <h2 class="section-title">Interactive <span class="highlight">Playground</span></h2>
+            <p class="section-subtitle">
+                A zero-install browser lab — one HTML file, no server, no dependencies.
+                Everything runs live, even offline.
+            </p>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🧠</div>
+                        <div>
+                            <div class="card-title">Live Neuron Trainer</div>
+                            <div class="card-meta">Gradient descent • Real-time</div>
+                        </div>
+                    </div>
+                    <p style="color:var(--text-muted);font-size:0.9rem;">
+                        Drag the sliders and watch a single neuron learn — the loss falls,
+                        the gradient flows, and the weights update in real time.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">✂️</div>
+                        <div>
+                            <div class="card-title">BPE Tokenizer Lab</div>
+                            <div class="card-meta">Merge rules • Compression</div>
+                        </div>
+                    </div>
+                    <p style="color:var(--text-muted);font-size:0.9rem;">
+                        Type any text and watch the byte-pair encoding tokenizer split it,
+                        merge it, and count the tokens — and what those tokens cost.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">💰</div>
+                        <div>
+                            <div class="card-title">API Cost Calculator</div>
+                            <div class="card-meta">Token pricing • Real rates</div>
+                        </div>
+                    </div>
+                    <p style="color:var(--text-muted);font-size:0.9rem;">
+                        See why fewer tokens mean lower bills — compare API costs across
+                        model sizes with realistic per-token pricing.
+                    </p>
+                </div>
+            </div>
+            <div class="playground-cta">
+                <a href="lab/playground.html" class="btn btn-primary">⚡ Open the Playground</a>
+                <a href="lab/README.md" class="btn btn-outline">Read the Lab Guide</a>
+            </div>
+        </div>
+    </section>
 
     <!-- Getting Started -->
     <section class="section reveal" id="getting-started">
@@ -167,6 +222,12 @@
                     <div class="timeline-content">
                         <div class="timeline-title">Clone the repository</div>
                         <div class="timeline-desc">Get the full curriculum on your machine.</div>
+
+                        <div class="cmd-row">
+                            <pre id="cmd-clone"><code>git clone https://github.com/satyabhan007/AI-ML.git
+cd AI-ML</code></pre>
+                            <button class="copy-btn" data-target="#cmd-clone" type="button">Copy</button>
+                        </div>
                     </div>
                 </div>
                 <div class="timeline-item">
@@ -175,6 +236,11 @@
                         <div class="timeline-title">Run the scenarios tester</div>
                         <div class="timeline-desc">
                             Verifies all 12 real-world scenario tests pass in under 2 seconds.
+
+                        <div class="cmd-row">
+                            <pre id="cmd-test"><code>python lab/scenarios_tester.py</code></pre>
+                            <button class="copy-btn" data-target="#cmd-test" type="button">Copy</button>
+                        </div>
                         </div>
                     </div>
                 </div>

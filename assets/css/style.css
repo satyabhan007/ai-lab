@@ -254,6 +254,24 @@ pre code { background: none; color: #d1d5db; padding: 0; font-size: 0.85rem; }
 .scroll-dot:nth-child(3) { animation-delay: 0.4s; }
 @keyframes pulse-dot { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
+/* ---- Command blocks with copy button ---- */
+.cmd-row { position: relative; }
+.cmd-row pre { margin: 12px 0 0; padding-right: 96px; }
+.cmd-row pre code { font-size: 0.8rem; }
+.copy-btn {
+    position: absolute; top: 12px; right: 12px;
+    padding: 4px 12px; border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    font-size: 0.75rem; font-weight: 600;
+    transition: all 0.2s ease;
+}
+.copy-btn:hover { color: var(--text-main); border-color: var(--primary); }
+
+/* ---- Playground CTA ---- */
+.playground-cta { display: flex; gap: 14px; justify-content: center; margin-top: 40px; flex-wrap: wrap; }
+
 /* ---- Footer ---- */
 .site-footer { background: #050810; border-top: 1px solid var(--border-light); padding: 48px 0 24px; text-align: center; }
 .footer-content { margin-bottom: 24px; }
@@ -278,18 +296,20 @@ pre code { background: none; color: #d1d5db; padding: 0; font-size: 0.85rem; }
 }
 
 /* ---- Scroll reveal animation ---- */
-.reveal {
+/* Only hide content when JS is available (html.js set inline in <head>),
+   so the page stays fully visible if scripts fail to load. */
+.js .reveal {
     opacity: 0;
     transform: translateY(24px);
     transition: opacity 0.6s ease, transform 0.6s ease;
 }
-.revealed {
+.js .revealed {
     opacity: 1;
     transform: translateY(0);
 }
-.reveal.delay-1 { transition-delay: 0.1s; }
-.reveal.delay-2 { transition-delay: 0.2s; }
-.reveal.delay-3 { transition-delay: 0.3s; }
+.js .reveal.delay-1 { transition-delay: 0.1s; }
+.js .reveal.delay-2 { transition-delay: 0.2s; }
+.js .reveal.delay-3 { transition-delay: 0.3s; }
 
 /* ---- GitHub corner ---- */
 .github-corner {

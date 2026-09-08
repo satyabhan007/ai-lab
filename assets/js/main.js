@@ -111,3 +111,4 @@
         initNavScroll();
         initPhaseLinks();
     });
+})();
