@@ -1,6 +1,6 @@
 # ============================================================
 #  watch_and_push.ps1 — Persistent AI-ML Auto-Sync Watcher
-#  Watches: micrograd, tokenizer, lab, assets, .github, root files
+#  Watches: micrograd, tokenizer, attention, lab, assets, .github, root files
 #  Target:  https://github.com/satyabhan007/AI-ML
 #  Repo:    D:\test\account rotate\AI-ML
 # ============================================================
@@ -12,11 +12,11 @@ $LogFile       = "$RepoDir\auto_sync.log"
 $DebounceSec   = 3
 
 # Subdirectories to watch relative to workspace
-$WatchFolders  = @("micrograd", "tokenizer", "lab", "assets", ".github")
+$WatchFolders  = @("micrograd", "tokenizer", "attention", "lab", "assets", ".github")
 $WatchedExts   = @(".md", ".py", ".html", ".css", ".js", ".json", ".yml")
 
 # Root-level files to watch (directly in workspace root)
-$WatchRootFiles = @("index.html", "404.html", ".gitignore")
+$WatchRootFiles = @("index.html", "404.html", ".gitignore", "README.md")
 
 function Log-Message([string]$msg, [string]$color = "White") {
     $ts = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
