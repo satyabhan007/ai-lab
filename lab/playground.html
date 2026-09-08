@@ -229,6 +229,137 @@
             text-align: left;
             font-family: Consolas, monospace;
         }
+        /* ---- daily-life app badges ---- */
+        .daily {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 8px 0 0;
+            padding: 0;
+            list-style: none;
+        }
+        .daily li {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 99px;
+            background: #0b1220;
+            border: 1px solid #334155;
+            color: var(--dim);
+        }
+        .daily li b {
+            color: var(--acc);
+            font-weight: 600;
+        }
+        .interact-hint {
+            font-size: 11px;
+            color: var(--ok);
+            margin: 4px 0 0;
+            font-style: italic;
+        }
+
+        .dashboard { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; }
+        .app-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
+        .app-cell { background: #0b1220; border-radius: 10px; padding: 10px; text-align: center; font-size: 12px; transition: transform 0.2s; cursor: default; }
+        .app-cell:hover { transform: translateY(-3px); background: #1a2540; }
+        .app-icon { font-size: 24px; display: block; margin-bottom: 4px; }
+        .app-cell b { display: block; color: #e2e8f0; font-size: 13px; }
+        .app-concept { color: #94a3b8; font-size: 11px; display: block; margin-top: 2px; }
+        .your-turn { background: #0b1220; border-left: 3px solid #38bdf8; padding: 10px 14px; margin-top: 12px; border-radius: 0 8px 8px 0; font-size: 13px; }
+        .your-turn code { background: #1e293b; padding: 2px 6px; border-radius: 4px; color: #facc15; }
+        .your-turn input { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; border-radius: 6px; padding: 4px 8px; }
+
+        /* ═══ DAILY LIFE APP BADGES ═══ */
+        .app-badge {
+            display: inline-block;
+            background: #334155;
+            color: #e2e8f0;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin: 4px 4px 0 0;
+        }
+        .app-badge.netflix { background: #e50914; color: white; }
+        .app-badge.spotify { background: #1db954; color: white; }
+        .app-badge.google { background: #4285f4; color: white; }
+        .app-badge.amazon { background: #ff9900; color: black; }
+        .app-badge.instagram { background: #e1306c; color: white; }
+        .app-badge.tiktok { background: #25f4ee; color: black; }
+        .app-badge.gmail { background: #ea4335; color: white; }
+        .app-badge.zillow { background: #006aff; color: white; }
+        .app-badge.chatgpt { background: #10a37f; color: white; }
+
+        /* ═══ INTERACTIVE CHALLENGES ═══ */
+        .challenge {
+            background: #0b1220;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+        .challenge-title {
+            color: #facc15;
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        .challenge-desc {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+        .challenge-btn {
+            background: #facc15;
+            color: #04121f;
+            border: 0;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .challenge-result {
+            margin-top: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* ═══ PROGRESS TRACKER ═══ */
+        .progress-bar {
+            height: 8px;
+            background: #334155;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ade80, #38bdf8);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* ═══ CONCEPT MAP ═══ */
+        .concept-map {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .concept-node {
+            background: #1e293b;
+            border: 1px solid #38bdf8;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            text-align: center;
+        }
+        .concept-node .icon { font-size: 20px; display: block; }
+        .concept-arrow {
+            color: #38bdf8;
+            font-size: 20px;
+            align-self: center;
+        }
     </style>
 </head>
 
@@ -239,12 +370,33 @@
             live in your browser · no libraries</div>
     </header>
     <main>
+        <!-- ══════════ DAILY LIFE DASHBOARD ══════════ -->
+        <div class="card full dashboard">
+            <h2>📱 These 7 concepts power the apps you use every day</h2>
+            <p class="hint">Every time you open Gmail, ChatGPT, Spotify, or Google Translate — these exact algorithms are running. Hover each app to see which concept it uses.</p>
+            <div class="app-grid">
+                <div class="app-cell"><span class="app-icon">📧</span><b>Gmail</b><span class="app-concept">Spam filter → Scenario 2</span></div>
+                <div class="app-cell"><span class="app-icon">💬</span><b>ChatGPT</b><span class="app-concept">Tokenizer + Attention → Scenarios 3,4</span></div>
+                <div class="app-cell"><span class="app-icon">🌐</span><b>Google Translate</b><span class="app-concept">Attention → Scenario 4</span></div>
+                <div class="app-cell"><span class="app-icon">🎵</span><b>Spotify</b><span class="app-concept">Temperature sampling → Scenario 5</span></div>
+                <div class="app-cell"><span class="app-icon">🏠</span><b>Zillow</b><span class="app-concept">Regression → Scenario 2</span></div>
+                <div class="app-cell"><span class="app-icon">🛒</span><b>Amazon</b><span class="app-concept">Recommendation → Scenario 2</span></div>
+                <div class="app-cell"><span class="app-icon">📸</span><b>Face ID</b><span class="app-concept">Neural net → Scenario 1</span></div>
+                <div class="app-cell"><span class="app-icon">🗣️</span><b>Siri/Alexa</b><span class="app-concept">Attention + tokenizer → Scenarios 3,4</span></div>
+            </div>
+        </div>
+
 
         <!-- ══════════ SCENARIO 1: UMBRELLA ══════════ -->
         <div class="card">
             <h2>☂ Scenario 1 — The Umbrella Neuron <span class="pill ok">live</span></h2>
-            <p class="hint">A trained neuron with FROZEN weights (w=[+2.0,−0.5,+1.0], b=−0.3) decides for you.
-                Real-world twin: any yes/no app feature (spam flags, credit pre-check).</p>
+            <p class="hint">A trained neuron with FROZEN weights (w=[+2.0,−0.5,+1.0], b=−0.3) decides for you.</p>
+            <span class="app-badge">📧 Gmail spam filter</span>
+            <span class="app-badge">💳 Credit card fraud check</span>
+            <span class="app-badge">🔔 "Cancel subscription?" prompts</span>
+            <span class="app-badge">🏥 Triage: urgent or not?</span>
+            <ul class="daily"><li><b>📱 Weather apps</b> — Apple Weather, AccuWeather</li><li><b>💳 Credit pre-check</b> — instant yes/no</li><li><b>🔔 Churn prediction</b> — cancel subscription?</li></ul>
+            <p class="interact-hint">👆 Drag the sliders — find the exact point where the verdict flips!</p>
             <label>Is it cloudy? <span class="val" id="v1">0.8</span></label>
             <input type="range" id="x1" title="Is it cloudy" min="0" max="1" step="0.05" value="0.8">
             <label>Is it summer? <span class="val" id="v2">0.7</span></label>
@@ -256,13 +408,19 @@
                 <div class="mid"></div>
             </div>
             <div class="stat" id="umbOut"></div>
+            <div class="challenge"><b>🎯 Challenge:</b> Find the exact cloudy value where the verdict flips from "bring umbrella" to "leave it" (try 0.45–0.55). That flip line is the <i>decision boundary</i> — every classifier has one.</div>
         </div>
 
         <!-- ══════════ SCENARIO 2: TRAIN LIVE ══════════ -->
         <div class="card">
             <h2>🏋 Scenario 2 — Train a Network LIVE <span class="pill ok">live</span></h2>
-            <p class="hint">Real task: learn 5 weather→umbrella examples (same as step3_full_network.py). 41 knobs,
-                hinge loss. Watch loss fall — then drag the learning rate and see the shower-knob effect.</p>
+            <p class="hint">Real task: learn 5 weather→umbrella examples. 41 knobs, hinge loss. Watch loss fall — then drag the learning rate and see the shower-knob effect.</p>
+            <span class="app-badge">📧 Gmail spam filter</span>
+            <span class="app-badge">🏠 Zillow price estimate</span>
+            <span class="app-badge">📱 Face ID unlock</span>
+            <span class="app-badge">🎬 Netflix recommendations</span>
+            <ul class="daily"><li><b>📧 Gmail spam filter</b> — trains on your mail</li><li><b>🏠 Zillow pricing</b> — learns house values</li><li><b>🎬 Netflix recs</b> — learns what you like</li></ul>
+            <p class="interact-hint">👆 Click +100 steps, then drag lr to 0.5 (bounces!) then 0.005 (crawls)</p>
             <label>Learning rate (step size) <span class="val" id="lrV">0.05</span></label>
             <input type="range" id="lr" title="Learning rate" min="0.005" max="0.5" step="0.005" value="0.05">
             <button id="b1">+1 step</button><button id="b10">+10 steps</button><button id="b100">+100</button>
@@ -271,13 +429,19 @@
                 style="width:100%;background:#0b1220;border-radius:8px;margin-top:10px"></canvas>
             <div class="stat" id="trainStat"></div>
             <table id="predTable"></table>
+            <div class="challenge"><b>🎯 Challenge:</b> Set learning rate to 0.5 and train — watch the loss BOUNCE (the shower knob!). Then set it to 0.005 — it crawls. Find the highest LR that still converges. That's the art of tuning.</div>
         </div>
 
         <!-- ══════════ SCENARIO 3: TOKENIZER LAB ══════════ -->
         <div class="card full">
             <h2>🔢 Scenario 3 — Tokenizer Lab + API Cost Calculator <span class="pill ok">live</span></h2>
-            <p class="hint">Real task: this is literally how ChatGPT bills you — you pay per TOKEN, not per word. Train
-                your own BPE on the corpus below, then type anything.</p>
+            <p class="hint">Real task: this is literally how ChatGPT bills you — you pay per TOKEN, not per word.</p>
+            <span class="app-badge">💬 ChatGPT / Claude billing</span>
+            <span class="app-badge">⌨️ Phone autocomplete</span>
+            <span class="app-badge">🌐 Google Translate</span>
+            <span class="app-badge">🔍 Google Search indexing</span>
+            <ul class="daily"><li><b>💬 ChatGPT / Claude</b> — tokenizes every message</li><li><b>⌨️ Phone keyboard</b> — predicts next token</li><li><b>🌐 Google Translate</b> — handles 100+ languages</li></ul>
+            <p class="interact-hint">👆 Type emoji, Hindi, code — nothing is "unknown" (byte fallback!)</p>
             <div class="grid3">
                 <div>
                     <label>Training corpus (edit me!)</label>
@@ -298,27 +462,34 @@
                     <div class="stat" id="costStat" style="border:1px solid #334155"></div>
                 </div>
             </div>
+            <div class="challenge"><b>🎯 Challenge:</b> Type an emoji like "🚀" — it falls back to raw bytes (4 tokens for one emoji!). Now type "the" — it's 1 token. That's why GPT charges more for emoji-heavy messages.</div>
         </div>
 
         <!-- ══════════ SCENARIO 4: ATTENTION VISUALIZER ══════════ -->
         <div class="card">
             <h2>👀 Scenario 4 — Attention Visualizer <span class="pill ok">live</span></h2>
-            <p class="hint">The sentence every AI paper cites: what does "it" refer to?
-                Click an ending — the bars are REAL softmax attention weights (same
-                formula as GPT). Pick a different ending and watch the weights move.</p>
+            <p class="hint">The sentence every AI paper cites: what does "it" refer to? Click an ending — the bars are REAL softmax attention weights.</p>
+            <span class="app-badge">🌐 Google Translate</span>
+            <span class="app-badge">📝 Grammarly suggestions</span>
+            <span class="app-badge">🗣️ Siri / Alexa understanding</span>
+            <span class="app-badge">📧 Gmail Smart Reply</span>
+            <ul class="daily"><li><b>🔍 Google Search</b> — attends to query words</li><li><b>💬 ChatGPT</b> — reads your whole conversation</li><li><b>📧 Gmail Smart Reply</b> — attends to email context</li></ul>
+            <p class="interact-hint">👆 Click TIRED vs WIDE — watch attention shift from animal to street</p>
             <label>Sentence: <em>"the animal didn't cross the street because it was too …"</em></label>
             <button id="attTired">…TIRED 🐫</button>
             <button id="attWide">…WIDE 🛣️</button>
             <div class="stat" id="attOut">click an ending ↑</div>
+            <div class="challenge"><b>🎯 Challenge:</b> Click TIRED → "it" looks at "animal" 60%+. Click WIDE → "it" flips to "street" 55%+. Same sentence, different meaning — attention is how AI reads context. This is the engine behind Google Translate.</div>
         </div>
 
         <!-- ══════════ SCENARIO 5: TEMPERATURE EXPLORER ══════════ -->
         <div class="card">
             <h2>🌡 Scenario 5 — Temperature Explorer <span class="pill ok">live</span></h2>
-            <p class="hint">This is ChatGPT's creativity dial, exposed. The model's
-                honest guess after "The cat sat on the ___" is fixed — the temperature
-                decides how adventurous the sampling is. Watch the bars and the
-                10 sampled words change.</p>
+            <p class="hint">This is ChatGPT's creativity dial, exposed. The model's honest guess is fixed — the temperature decides how adventurous the sampling is.</p>
+            <span class="app-badge">💬 ChatGPT creativity</span>
+            <span class="app-badge">🎨 DALL-E image variety</span>
+            <span class="app-badge">🎵 Spotify Discover Weekly</span>
+            <span class="app-badge">📝 Gmail Smart Compose</span>
             <label>Temperature <span class="val" id="tempV">1.00</span>
                 <span style="color:#64748b">(0.1 = laser · 3.0 = chaos)</span></label>
             <input type="range" id="tempSlider" min="0.1" max="3" step="0.05" value="1">
@@ -329,10 +500,11 @@
         <!-- ══════════ SCENARIO 6: CONTEXT COST (O(n²)) ══════════ -->
         <div class="card">
             <h2>🧮 Scenario 6 — Context Cost: attention is O(n²) <span class="pill ok">live</span></h2>
-            <p class="hint">Why long context costs more than linear: EVERY token must
-                score EVERY token. Drag the context length and watch the pairwise
-                score count explode — this one formula explains long-context pricing,
-                Flash Attention and KV caches.</p>
+            <p class="hint">Why long context costs more than linear: EVERY token must score EVERY token. Drag the context length and watch the pairwise score count explode.</p>
+            <span class="app-badge">💬 ChatGPT long conversations</span>
+            <span class="app-badge">📄 Claude 100K document upload</span>
+            <span class="app-badge">⚡ Flash Attention (why it exists)</span>
+            <span class="app-badge">🧠 KV Cache (vLLM)</span>
             <label>Context length: <span class="val" id="ctxV">1024</span> tokens</label>
             <input type="range" id="ctxSlider" min="128" max="32768" step="128" value="1024">
             <div class="stat" id="ctxOut"></div>
@@ -393,7 +565,40 @@
             </div>
         </div>
 
-    </main>
+        <!-- ══════════ SPOT THE AI QUIZ ══════════ -->
+    <section class="card full" style="margin-top:24px;background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border:1px solid #334155;">
+        <h2>🎯 Spot the AI — Interactive Quiz <span class="pill ok">live</span></h2>
+        <p class="hint">10 everyday apps — can you spot which use AI? Click each to reveal. Test yourself!</p>
+        <div class="app-grid" id="quizGrid" style="margin-top:12px;"></div>
+        <div class="stat" id="quizScore" style="margin-top:12px;">Score: 0/10 — click each card to reveal</div>
+        <button id="quizReset" style="margin-top:8px;">↺ Reset Quiz</button>
+    </section>
+
+    <!-- ══════════ FREE-PLAY SANDBOX ══════════ -->
+    <section class="card full" style="margin-top:24px;">
+        <h2>🧪 Free-Play Sandbox <span class="pill ok">live</span></h2>
+        <p class="hint">Mix and match! Type a sentence AND pick an app to see how AI processes it.</p>
+        <div class="grid3">
+            <div>
+                <label>Your sentence</label>
+                <input type="text" id="sandboxInput" value="I love this movie!" oninput="runSandbox()" style="width:100%;">
+                <label style="margin-top:8px;">Pick an app</label>
+                <select id="sandboxApp" onchange="runSandbox()" style="width:100%;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:6px;padding:6px;">
+                    <option value="sentiment">📊 Sentiment (Netflix)</option>
+                    <option value="translate">🌐 Translation (Google)</option>
+                    <option value="recommend">🎵 Recommendation (Spotify)</option>
+                    <option value="search">🔍 Search (Google)</option>
+                    <option value="voice">🗣️ Voice (Siri)</option>
+                </select>
+            </div>
+            <div style="grid-column:span 2;">
+                <label>Pipeline output</label>
+                <div class="stat" id="sandboxOut" style="min-height:120px;">Type a sentence to see the AI pipeline...</div>
+            </div>
+        </div>
+    </section>
+
+</main>
     <script>
         /* ═══════════ micrograd, ported to JS (same 4 backward rules) ═══════════ */
         class V {
@@ -714,7 +919,98 @@ that's ≈ ${Math.ceil(1e6 / Math.max(ids.length, 1)).toLocaleString()} messages
         document.getElementById('mmReset').onclick = mmReset;
         renderMM();
 
+
+        /* ═══ YOUR TURN: Custom weights for Umbrella ═══ */
+        function updateCustomW() {
+            const parts = document.getElementById('customW').value.split(',').map(Number);
+            if (parts.length === 3 && parts.every(n => !isNaN(n))) {
+                window.customW = parts;
+                renderUmbrella();
+                document.getElementById('customWout').textContent = ' ✓ weights updated';
+            }
+        }
+
+        /* ═══ YOUR TURN: Your own message cost ═══ */
+        function renderYourCost() {
+            const msg = document.getElementById('yourMsg').value;
+            const ids = window.tok ? window.tok.encode(msg) : [];
+            const cost = ids.length * 0.15 / 1e6;
+            document.getElementById('yourCostOut').textContent =
+                `${msg.length} chars → ${ids.length} tokens → $${cost.toFixed(8)} per message`;
+        }
+
     </script>
+
+<script>
+    /* ══════════ SPOT THE AI QUIZ ══════════ */
+    const QUIZ = [
+        { app: "📧 Gmail spam filter", usesAI: true, reason: "ML classifier trained on billions of emails" },
+        { app: "🎵 Spotify Discover Weekly", usesAI: true, reason: "Collaborative filtering + NLP on music blogs" },
+        { app: "📸 Face ID on iPhone", usesAI: true, reason: "Neural network maps 30,000 IR dots on your face" },
+        { app: "🏠 Zillow home estimates", usesAI: true, reason: "Regression model on millions of home sales" },
+        { app: "🛒 Amazon recommendations", usesAI: true, reason: "Matrix factorization predicts what you'll buy" },
+        { app: "📺 Netflix thumbnails", usesAI: true, reason: "A/B testing + personalization picks the image" },
+        { app: "🧮 Calculator app", usesAI: false, reason: "Pure math — no learning. Not everything is AI!" },
+        { app: "🔒 Password manager", usesAI: false, reason: "Encryption + storage — no prediction involved" },
+        { app: "🗣️ Siri / Alexa", usesAI: true, reason: "Speech → NLU → response, all neural networks" },
+        { app: "📝 Notepad app", usesAI: false, reason: "Just text editing — doesn't learn from you" },
+    ];
+    let quizAnswered = new Set();
+    function buildQuiz() {
+        const grid = document.getElementById('quizGrid');
+        grid.innerHTML = '';
+        QUIZ.forEach((q, i) => {
+            const cell = document.createElement('div');
+            cell.className = 'app-cell';
+            cell.id = 'quiz-' + i;
+            cell.innerHTML = '<span class="app-icon">' + q.app.split(' ')[0] + '</span><b>' + q.app.split(' ').slice(1).join(' ') + '</b><span class="app-concept">click to reveal</span>';
+            cell.onclick = () => revealQuiz(i);
+            grid.appendChild(cell);
+        });
+        quizAnswered = new Set();
+        document.getElementById('quizScore').textContent = 'Score: 0/10 — click each card to reveal';
+    }
+    function revealQuiz(i) {
+        if (quizAnswered.has(i)) return;
+        quizAnswered.add(i);
+        const q = QUIZ[i];
+        const cell = document.getElementById('quiz-' + i);
+        cell.innerHTML = '<span class="app-icon">' + q.app.split(' ')[0] + '</span><b>' + q.app.split(' ').slice(1).join(' ') + '</b><span class="app-concept" style="color:' + (q.usesAI ? '#4ade80' : '#f87171') + '">' + (q.usesAI ? '✅ USES AI' : '❌ NOT AI') + '</span><span class="app-concept" style="color:#94a3b8;font-size:11px;margin-top:4px;">' + q.reason + '</span>';
+        document.getElementById('quizScore').textContent = 'Score: ' + quizAnswered.size + '/10 revealed' + (quizAnswered.size === 10 ? ' 🎉 All done!' : ' — keep clicking!');
+    }
+    document.getElementById('quizReset').onclick = buildQuiz;
+    buildQuiz();
+
+    /* ══════════ FREE-PLAY SANDBOX ══════════ */
+    function runSandbox() {
+        const text = document.getElementById('sandboxInput').value || "I love this movie!";
+        const app = document.getElementById('sandboxApp').value;
+        const words = text.split(/\s+/).filter(w => w.length > 0);
+        const tokens = words.length;
+        const sentimentWords = { love: 1, amazing: 1, great: 1, awesome: 1, best: 1, good: 0.5, like: 0.5, hate: -1, terrible: -1, awful: -1, worst: -1, bad: -0.5, boring: -0.5 };
+        let sentimentScore = 0;
+        words.forEach(w => { const wl = w.toLowerCase().replace(/[^a-z]/g, ''); if (sentimentWords[wl] !== undefined) sentimentScore += sentimentWords[wl]; });
+        const sentiment = sentimentScore > 0 ? 'POSITIVE 😊' : sentimentScore < 0 ? 'NEGATIVE 😞' : 'NEUTRAL 😐';
+        const appNames = { sentiment: '📊 Sentiment Analysis', translate: '🌐 Translation', recommend: '🎵 Recommendation', search: '🔍 Search', voice: '🗣️ Voice Assistant' };
+        const appReasons = {
+            sentiment: 'Scores ' + (sentimentScore > 0 ? '+' : '') + sentimentScore.toFixed(1) + ' → <b>' + sentiment + '</b>. Used by: Netflix reviews, Twitter monitoring.',
+            translate: 'Tokenizes into ' + tokens + ' tokens, runs through transformer encoder-decoder. Used by: Google Translate, DeepL.',
+            recommend: 'Converts ' + tokens + ' words into embedding vector, finds similar users via dot product. Used by: Spotify, Netflix.',
+            search: 'Tokenizes query → inverted index → ranks by relevance (BERT-style). Used by: Google, Bing.',
+            voice: 'Audio → spectrogram → CNN → transformer → text tokens → NLU. Used by: Siri, Alexa.'
+        };
+        document.getElementById('sandboxOut').innerHTML = '<b>Input:</b> "' + text + '"<br><br><b>Pipeline:</b> ' + tokens + ' words → ' + tokens + ' tokens → embedding → ' + appNames[app] + ' model → prediction<br><br><b>' + appNames[app] + ':</b> ' + appReasons[app] + '<br><br><b>Key insight:</b> Every app uses the SAME building blocks you just played with — tokenization, embeddings, attention, classification. Only the training data differs!';
+    }
+    runSandbox();
+</script>
+    <footer style="background:#050810;border-top:1px solid #334155;padding:24px 32px;text-align:center;margin-top:32px;">
+        <div style="color:#94a3b8;font-size:13px;margin-bottom:8px;">Built with ❤️ by <a href="https://www.linkedin.com/in/satyarao" target="_blank" rel="noopener" style="color:#38bdf8;text-decoration:underline;">Satya</a></div>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+            <a href="https://satyabhan007.github.io" target="_blank" rel="noopener" style="color:#38bdf8;font-size:13px;">🌐 satyabhan007.github.io</a>
+            <a href="https://github.com/satyabhan007/AI-ML" target="_blank" rel="noopener" style="color:#38bdf8;font-size:13px;">💻 GitHub</a>
+            <a href="https://www.linkedin.com/in/satyarao" target="_blank" rel="noopener" style="color:#38bdf8;font-size:13px;">💼 LinkedIn</a>
+        </div>
+    </footer>
 </body>
 
 </html>
