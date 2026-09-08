@@ -49,7 +49,7 @@
                 <a href="#getting-started" class="btn btn-outline">Quick Start Guide</a>
             </div>
             <div class="badge-row">
-                <span class="badge badge-green">✅ 12/12 Tests Passing</span>
+                <span class="badge badge-green">✅ 52/52 Tests Passing</span>
                 <span class="badge badge-primary">🐍 Pure Python 3.13</span>
                 <span class="badge badge-purple">⚡ Zero Dependencies</span>
             </div>
@@ -65,20 +65,20 @@
         <div class="container">
             <div class="stats-bar">
                 <div class="stat-item">
-                    <div class="stat-value">3</div>
+                    <div class="stat-value">5</div>
                     <div class="stat-label">Learning Phases</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">12</div>
-                    <div class="stat-label">Real-World Scenarios</div>
+                    <div class="stat-value">52</div>
+                    <div class="stat-label">Automated Checks</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value">100%</div>
                     <div class="stat-label">Test Pass Rate</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">2200+</div>
-                    <div class="stat-label">Lines of Docs</div>
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">Live Browser Labs</div>
                 </div>
             </div>
         </div>
@@ -87,7 +87,7 @@
     <!-- Curriculum -->
     <section class="section reveal" id="curriculum">
         <div class="container">
-            <h2 class="section-title">Three Phases, One Full Stack</h2>
+            <h2 class="section-title">Five Phases, One Full Stack</h2>
             <p class="section-subtitle">
                 Each phase builds on the previous one — from the math inside a single neuron
                 to production-ready AI concepts. All code is <strong>zero-black-box</strong>.
@@ -142,13 +142,56 @@
                     </div>
                     <p style="margin:20px 0;color:var(--text-muted);font-size:0.9rem;">
                         Everything made <em>touchable</em>. A browser playground with live neuron
-                        sliders, BPE visualizer, cost calculator, and 5 real-world scenario tests.
+                        sliders, BPE visualizer, cost calculator, and 46 automated checks over 15 real-world scenarios.
                     </p>
                     <div style="display:flex;gap:8px;flex-wrap:wrap;">
                         <a href="lab/playground.html" class="btn btn-sm btn-primary">Open Playground</a>
                         <a href="lab/README.md" class="btn btn-sm btn-ghost">Lab Guide</a>
                     </div>
                 </div>
+
+                <div class="card phase-card" data-phase="Phase 4">
+                    <div style="display:flex;gap:16px;align-items:flex-start;">
+                        <div class="phase-number">4</div>
+                        <div>
+                            <div class="card-title">Attention — The Transformer Heart</div>
+                            <div class="card-meta">Self-Attention • Softmax • Causal Masks</div>
+                        </div>
+                    </div>
+                    <p style="margin:20px 0;color:var(--text-muted);font-size:0.9rem;">
+                        The mechanism inside GPT. Score every token against every other
+                        token, softmax the scores into percentages, and mix meanings —
+                        then train a mini transformer end-to-end with your own engine.
+                    </p>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <a href="attention/step1_similarity.py" class="btn btn-sm btn-outline">Step 1</a>
+                        <a href="attention/step2_self_attention.py" class="btn btn-sm btn-outline">Step 2</a>
+                        <a href="attention/step3_mini_transformer.py" class="btn btn-sm btn-outline">Step 3</a>
+                        <a href="attention/BEGINNER_GUIDE.md" class="btn btn-sm btn-ghost">Guide</a>
+                    </div>
+    </div>
+                <div class="card phase-card" data-phase="Phase 5">
+                <div style="display:flex;gap:16px;align-items:flex-start;">
+                    <div class="phase-number">5</div>
+                    <div>
+                        <div class="card-title">Matrix Multiplication Kernel</div>
+                        <div class="card-meta">Naive to Tiled to Strassen and n3 flops</div>
+                    </div>
+                </div>
+                <p style="margin:20px 0;color:var(--text-muted);font-size:0.9rem;">
+                    The operation every GPU runs billions of times per second. Build
+                    it four ways: naive, cache-tiled, Strassen divide-and-conquer,
+                    then matvec (which is exactly one attention head). Watch each
+                    algorithm agree and see why the loop order changes everything.
+                </p>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <a href="matmul/step1_naive.py" class="btn btn-sm btn-outline">Step 1</a>
+                    <a href="matmul/step2_tiled.py" class="btn btn-sm btn-outline">Step 2</a>
+                    <a href="matmul/step3_strassen.py" class="btn btn-sm btn-outline">Step 3</a>
+                    <a href="matmul/step4_matvec.py" class="btn btn-sm btn-outline">Step 4</a>
+                    <a href="matmul/BEGINNER_GUIDE.md" class="btn btn-sm btn-ghost">Guide</a>
+                </div>
+     </div>
             </div>
         </div>
     </section>
@@ -202,7 +245,46 @@
                     </p>
                 </div>
             </div>
-            <div class="playground-cta">
+<div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">👀</div>
+                        <div>
+                            <div class="card-title">Attention Visualizer</div>
+                            <div class="card-meta">Softmax weights • Live</div>
+                        </div>
+                    </div>
+                    <p style="color:var(--text-muted);font-size:0.9rem;">
+                        The famous "the animal didn't cross the street because it…" —
+                        click an ending and watch REAL attention weights re-route.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🌡️</div>
+                        <div>
+                            <div class="card-title">Temperature Explorer</div>
+                            <div class="card-meta">Sampling • Creativity dial</div>
+                        </div>
+                    </div>
+                    <p style="color:var(--text-muted);font-size:0.9rem;">
+                        ChatGPT's creativity knob exposed: drag the temperature and
+                        watch the next-word distribution sharpen or melt.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🧮</div>
+                        <div>
+                            <div class="card-title">Context Cost (O(n²))</div>
+                            <div class="card-meta">Why long context is expensive</div>
+                        </div>
+                    </div>
+                    <p style="color:var(--text-muted);font-size:0.9rem;">
+                        Every token scores every token: drag the context length and
+                        watch the pairwise-score count explode quadratically.
+                    </p>
+                </div>
+                        <div class="playground-cta">
                 <a href="lab/playground.html" class="btn btn-primary">⚡ Open the Playground</a>
                 <a href="lab/README.md" class="btn btn-outline">Read the Lab Guide</a>
             </div>
@@ -235,7 +317,7 @@ cd AI-ML</code></pre>
                     <div class="timeline-content">
                         <div class="timeline-title">Run the scenarios tester</div>
                         <div class="timeline-desc">
-                            Verifies all 12 real-world scenario tests pass in under 2 seconds.
+                            Verifies all 46 checks — every layer unit-tested, all 15 scenarios green — in seconds.
 
                         <div class="cmd-row">
                             <pre id="cmd-test"><code>python lab/scenarios_tester.py</code></pre>
@@ -317,6 +399,27 @@ cd AI-ML</code></pre>
                             <td>Learning Roadmap</td>
                             <td>20+ project roadmap from autograd to LLMs and AI agents</td>
                                                 </tr>
+                        <tr>
+                            <td><a href="attention/attention.py">attention.py</a></td>
+                            <td>Attention Core</td>
+                            <td>Softmax, √d scaling, causal masks, positional encoding — pure Python</td>
+                        </tr>
+                        <tr>
+                            <td><a href="attention/BEGINNER_GUIDE.md">Attention Guide</a></td>
+                            <td>Transformers 101</td>
+                            <td>Everyday analogies for queries, keys, values — and the O(n²) bill</td>
+                        </tr>
+            <tr>
+                <td><a href="matmul/matmul.py">matmul.py</a></td>
+                <td>Matrix Multiplication</td>
+                <td>Naive → tiled → Strassen → mat-vector — the kernel behind every layer</td>
+            </tr>
+            <tr>
+                <td><a href="matmul/BEGINNER_GUIDE.md">MatMul Guide</a></td>
+                <td>GPU Kernel Intuition</td>
+                <td>Why matmul is 80% of a forward pass, and how tiling cuts memory traffic</td>
+            </tr>
+                        
                     </tbody>
                 </table>
             </div>

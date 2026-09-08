@@ -1,8 +1,8 @@
-# Deploys the AI-ML GitHub Pages site from the repository root.
-# Pages is auto-enabled by configure-pages (enablement: true) — no manual setup needed.
-# Your site will be live at: https://<username>.github.io/<repo>/
-
 name: Deploy AI-ML to GitHub Pages
+
+# Deploys the full GitHub Pages site (index.html + static assets + lab playground)
+# from the repository root. Pages is auto-enabled by configure-pages (enablement: true),
+# so no manual Settings → Pages setup is required.
 
 on:
   push:

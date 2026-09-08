@@ -1,7 +1,7 @@
 """
 lab/scenarios_tester.py
 =======================
-AI LAB TESTER v2 — two kinds of checks, 46 total:
+AI LAB TESTER v2 — two kinds of checks, 52 total:
 
   PART 1 · LAYER-BY-LAYER UNIT TESTS (is every building block correct?)
      1. autograd engine  — every op's gradient vs numerical differentiation
@@ -9,13 +9,14 @@ AI LAB TESTER v2 — two kinds of checks, 46 total:
      3. mlp learns       — a fresh MLP trains to 100% on the toy dataset
      4. tokenizer        — BPE roundtrips, compression, multi-byte tokens
      5. attention        — softmax, temperature, √d scaling, causal mask, positions
+     6. matmul           — naive/tiled/Strassen agree, n³ flops, matvec = attention
 
   PART 2 · REAL-WORLD SCENARIOS (do the blocks solve actual problems?)
-     6.  ☂  umbrella decision        11. 🌡 temperature sampling
-     7.  📧 spam filter              12. 👤 pronoun resolution
-     8.  🏠 house price estimate     13. 📈 attention is O(n²)
-     9.  💬 chat API billing         14. 🎭 causal mask proof
-     10. 🔬 autograd unit test       15. 🤖 mini transformer end-to-end
+     7.  ☂  umbrella decision        12. 🌡 temperature sampling
+     8.  📧 spam filter              13. 👤 pronoun resolution
+     9.  🏠 house price estimate     14. 📈 attention is O(n²)
+     10. 💬 chat API billing         15. 🎭 causal mask proof
+     11. 🔬 autograd unit test       16. 🤖 mini transformer end-to-end
 Run:  python scenarios_tester.py
 Exit code 0 = all pass, 1 = something failed (CI-friendly).
 """
@@ -30,6 +31,7 @@ HERE = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(HERE, '..', 'micrograd'))
 sys.path.insert(0, os.path.join(HERE, '..', 'tokenizer'))
 sys.path.insert(0, os.path.join(HERE, '..', 'attention'))
+sys.path.insert(0, os.path.join(HERE, '..', 'matmul'))
 
 from engine import Value                     # noqa: E402
 from nn import Neuron, Layer, MLP            # noqa: E402
@@ -37,6 +39,9 @@ from bpe import BPETokenizer                 # noqa: E402
 from attention import (                      # noqa: E402
     dot, softmax, scale_scores, attention_weights, attend,
     positional_encoding,
+)
+from matmul import (                         # noqa: E402
+    naive, tiled, strassen, matvec, transpose, count_flops, strassen_muls,
 )
 
 random.seed(42)
@@ -71,7 +76,7 @@ def check(label, ok, detail=""):
 
 print("╔" + "═" * 60 + "╗")
 print("║" + "  AI LAB TESTER v2 — LAYERS + REAL-WORLD SCENARIOS".center(60) + "║")
-print("║" + "  micrograd engine · nn · BPE · attention — 46 checks".center(60) + "║")
+print("║" + "  micrograd · nn · BPE · attention · matmul — 52 checks".center(60) + "║")
 print("╚" + "═" * 60 + "╝")
 
 # ══════════════════════════════════════════════════════════════════════
@@ -191,6 +196,43 @@ ok += check("nearby positions encode more similarly than far ones",
             dot(pe[0], pe[1]) > dot(pe[0], pe[50]),
             f"cos(0,1)={dot(pe[0],pe[1]):+.2f} > cos(0,50)={dot(pe[0],pe[50]):+.2f}")
 record("👀 attention", ok, 6)
+# ── LAYER 5 · matmul: correctness + the O(n³) story + matvec = attention ─
+print("\n— 6 · matmul — naive/tiled/Strassen agree, n³ flops, matvec = attention —")
+ok = 0
+# known 2×2 multiply
+A2 = [[1, 2], [3, 4]]
+B2 = [[5, 6], [7, 8]]
+C2 = naive(A2, B2)
+ok += check("naive 2×2: [[1,2],[3,4]]·[[5,6],[7,8]] = [[19,22],[43,50]]",
+            C2 == [[19.0, 22.0], [43.0, 50.0]], f"got {C2}")
+# exact flop counts on the instrumented counter
+muls, adds = count_flops(16)
+ok += check(f"instrumented counter: 16×16 naive = exactly 16³ = 4096 mults + 4096 adds",
+            (muls, adds) == (16 ** 3, 16 ** 3), f"got {muls} mults, {adds} adds")
+# tiled matches naive
+random.seed(5)
+n24 = 24
+A24 = [[random.uniform(-1, 1) for _ in range(n24)] for _ in range(n24)]
+B24 = [[random.uniform(-1, 1) for _ in range(n24)] for _ in range(n24)]
+Cna, Cti = naive(A24, B24), tiled(A24, B24, TILE=4)
+ok += check(f"tiled() == naive() on 24×24 random matrices (tile=4)",
+            all(abs(Cna[i][j] - Cti[i][j]) < 1e-9 for i in range(n24) for j in range(n24)))
+# Strassen matches naive
+random.seed(9)
+A8 = [[random.uniform(-1, 1) for _ in range(8)] for _ in range(8)]
+B8 = [[random.uniform(-1, 1) for _ in range(8)] for _ in range(8)]
+Cs1, Cs2 = naive(A8, B8), strassen(A8, B8)
+ok += check(f"strassen() == naive() on 8×8 random matrices",
+            all(abs(Cs1[i][j] - Cs2[i][j]) < 1e-9 for i in range(8) for j in range(8)))
+ok += check(f"strassen needs 7³=343 mults (vs naive 512) — the exact n^log2(7) count",
+            strassen_muls(8) == 7 ** 3, f"got {strassen_muls(8)}")
+# matvec = attention: scores = matvec(Kᵀ-style), and transpose is correct
+M = [[1, 2, 3], [4, 5, 6]]
+x = [1, 0, -1]
+ok += check(f"matvec([[1,2,3],[4,5,6]], [1,0,-1]) = [-2, -2]",
+            matvec(M, x) == [-2.0, -2.0], f"got {matvec(M, x)}")
+record("🧮 matmul", ok, 6)
+
 # ══════════════════════════════════════════════════════════════════════
 # PART 2 · REAL-WORLD SCENARIOS
 # ══════════════════════════════════════════════════════════════════════
@@ -477,14 +519,14 @@ def scoreblock(title, rows):
     return p_all, t_all
 
 
-p1, t1 = scoreblock("  PART 1 · LAYER-BY-LAYER UNIT TESTS", results[:5])
-p2, t2 = scoreblock("  PART 2 · REAL-WORLD SCENARIOS", results[5:])
+p1, t1 = scoreblock("  PART 1 · LAYER-BY-LAYER UNIT TESTS", results[:6])
+p2, t2 = scoreblock("  PART 2 · REAL-WORLD SCENARIOS", results[6:])
 total_p, total_t = p1 + p2, t1 + t2
 pct = 100 * total_p / total_t
 print(f"\n  TOTAL: {total_p}/{total_t}  [{bar(pct)}] {pct:.0f}%")
 if total_p == total_t:
     print("\n  ✅ ALL SYSTEMS GO — every layer verified, every scenario solved.")
-    print("     engine → nn → tokenizer → attention → real products. Phase 4 complete!")
+    print("     engine → nn → tokenizer → attention → matmul → real products. Foundation complete!")
     sys.exit(0)
 else:
     print("\n  ❌ FAILURES FOUND — re-read the failing check above.")

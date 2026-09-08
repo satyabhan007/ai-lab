@@ -1,13 +1,10 @@
-# Runs the AI Lab real-world scenarios tester on every push & pull request.
-# Green check = all 12 scenario tests passed. Red X = something broke.
-
 name: AI Lab Tests
 
 on:
   push:
     branches: [main, master]
   pull_request:
-  workflow_dispatch:      # allows manual "Run workflow" button on GitHub
+  workflow_dispatch:
 
 jobs:
   scenarios:
@@ -21,7 +18,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Run real-world scenarios tester (12 tests)
+      - name: Run layer + scenario tester (52 checks)
         run: python lab/scenarios_tester.py
 
       - name: Run micrograd lessons (regression check)
@@ -35,3 +32,16 @@ jobs:
           python tokenizer/step1_why_tokenize.py
           python tokenizer/step2_train_bpe.py
           python tokenizer/step3_encode_decode.py
+
+      - name: Run attention lessons (regression check)
+        run: |
+          python attention/step1_similarity.py
+          python attention/step2_self_attention.py
+          python attention/step3_mini_transformer.py
+
+      - name: Run matmul lessons (regression check)
+        run: |
+          python matmul/step1_naive.py
+          python matmul/step2_tiled.py
+          python matmul/step3_strassen.py
+          python matmul/step4_matvec.py

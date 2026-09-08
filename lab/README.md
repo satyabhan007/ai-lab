@@ -1,8 +1,8 @@
 # 🧪 The AI Lab — Visual Testers & Real-World Scenarios
 
-Everything from phases 1–4 (autograd → nets → tokenizer → attention), made
+Everything from phases 1–5 (autograd → nets → tokenizer → attention → matmul), made
 **touchable**: a browser playground where you can *see* the concepts work, and a
-terminal tester with **46 PASS/FAIL checks** across every layer.
+terminal tester with **52 PASS/FAIL checks** across every layer.
 
 ---
 
@@ -18,6 +18,7 @@ terminal tester with **46 PASS/FAIL checks** across every layer.
 | 👀 **Attention Visualizer** | The famous sentence: *"the animal didn't cross the street because it was too …"* — click TIRED or WIDE and watch REAL softmax attention weights re-route between `animal` and `street` | How transformers resolve "it", translate, and summarize — the core of GPT |
 | 🌡 **Temperature Explorer** | The model's honest next-word guess is fixed; drag temperature 0.1→3.0 and watch the distribution sharpen into a laser or flatten into chaos, plus 10 live samples | The exact creativity dial behind every ChatGPT answer |
 | 🧮 **Context Cost (O(n²))** | Drag context length 128→32k tokens; watch pairwise scores explode quadratically, with memory footprint, $-to-read, and why Flash Attention/KV caches exist | Why long context costs more than linear — pricing, kernels, caching |
+| 🧲 **MatMul Visualizer** | Step through the triple loop `C[i][j] += A[i][k]·B[k][j]` one multiply at a time and watch a cell of C fill in | The exact loop every GPU runs billions of times per second |
 | 💰 **Cost Calculator** | The same token count → API cost at GPT-4o-mini rates ($0.15 / 1M tokens) | How ChatGPT actually bills you: per TOKEN, not per word |
 | 🌍 **Real-World Map** | Cards linking each product you use daily → the exact concept + panel that powers it | Spam filter, Zillow pricing, ChatGPT billing, autocomplete, multilingual BPE |
 
@@ -30,7 +31,7 @@ count-and-glue, same softmax-with-max-stability and 1/√d scaling. Nothing hidd
 **File:** `scenarios_tester.py` — run `python scenarios_tester.py` from this folder.
 
 Two parts — **layer-by-layer unit tests** (is every building block correct?) and
-**real-world scenarios** (do the blocks solve actual problems?) — 46 checks total:
+**real-world scenarios** (do the blocks solve actual problems?) — 52 checks total:
 
 ```
   PART 1 · LAYER-BY-LAYER UNIT TESTS
@@ -39,6 +40,7 @@ Two parts — **layer-by-layer unit tests** (is every building block correct?) a
   🏋 mlp learns        2/2   fresh weights → 100% accuracy by backprop
   🔢 tokenizer         4/4   BPE roundtrips, compression, multi-byte merges
   👀 attention         6/6   softmax, temperature, √d scaling, causal mask, PE
+  🧮 matmul            6/6   naive/tiled/Strassen agree · n³ flops · matvec = attention
 
   PART 2 · REAL-WORLD SCENARIOS
   ☂ umbrella           4/4   frozen-weight neuron decides 4 weather cases
@@ -52,7 +54,7 @@ Two parts — **layer-by-layer unit tests** (is every building block correct?) a
   🎭 causal mask       1/1   zero attention mass on the future, rows sum to 1
   🤖 mini transformer  3/3   tokens→PE→attention→next-word, generalizes UNSEEN
 
-  TOTAL: 46/46  ──  ✅ ALL SYSTEMS GO
+  TOTAL: 52/52  ──  ✅ ALL SYSTEMS GO
 ```
 
 Exit code 0 when everything passes (1 on failure), so CI fails loudly if you break a layer.
@@ -83,6 +85,7 @@ Exit code 0 when everything passes (1 on failure), so CI fails loudly if you bre
    words appear (T≥2). You've now *felt* the creativity dial.
 6. Drag context length and read the O(n²) numbers — this single panel explains
    long-context pricing, Flash Attention and KV caches.
+6b. Click **▶ step** in the MatMul Visualizer and trace C[0][0] = 1·9 + 2·6 + 3·3 = 42 by hand — that is the exact loop every GPU runs.
 7. Run `python scenarios_tester.py` — read every PASS line and trace WHY it passed using
    `micrograd/BEGINNER_GUIDE.md` and `attention/BEGINNER_GUIDE.md`.
 8. Modify & break: change a weight in Scenario 1 or a mask in the tester until a test
@@ -118,7 +121,7 @@ How it works:
 
 `.github/workflows/lab-tests.yml` runs automatically on every push/PR:
 
-- runs `lab/scenarios_tester.py` — all **46 layer + real-world checks**
+- runs `lab/scenarios_tester.py` — all **52 layer + real-world checks**
 - re-runs all 6 micrograd + tokenizer lessons **and** all 3 attention lessons as
   regression checks
 - green ✅ = everything still passes; red ❌ = you broke something (and CI tells you what)

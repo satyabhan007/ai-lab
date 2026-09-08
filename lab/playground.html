@@ -235,7 +235,7 @@
 <body>
     <header>
         <h1>🧪 AI Lab — <span>Interactive Playground</span></h1>
-        <div class="sub">Companion to micrograd/ + tokenizer/ + attention/ · everything below is the SAME code you built, running
+        <div class="sub">Companion to micrograd/ + tokenizer/ + attention/ + matmul/ · everything below is the SAME code you built, running
             live in your browser · no libraries</div>
     </header>
     <main>
@@ -338,7 +338,20 @@
             <div class="stat" id="ctxOut"></div>
         </div>
 
-        <!-- ══════════ REAL-WORLD MAP ══════════ -->
+                <!-- ══════════ SCENARIO 7: MATMUL VISUALIZER ══════════ -->
+        <div class="card">
+            <h2>🧲 Scenario 7 — MatMul Visualizer <span class="pill ok">live</span></h2>
+            <p class="hint">The single loop every GPU is running right now:
+                C[i][j] += A[i][k] · B[k][j]. Step through the multiply-accumulate
+                and watch one cell of C fill in — billions of these sit behind
+                every ChatGPT reply.</p>
+            <label>A = <em>[[1,2,3],[4,5,6],[7,8,9]]</em> &nbsp; B = <em>[[9,8,7],[6,5,4],[3,2,1]]</em></label>
+            <button id="mmStep">▶ step</button>
+            <button class="ghost" id="mmReset">↺ reset</button>
+            <div class="stat" id="mmOut">step through the loop ↑</div>
+        </div>
+
+<!-- ══════════ REAL-WORLD MAP ══════════ -->
         <div class="card full">
             <h2>🌍 Where You Just Used These Ideas In The Real World</h2>
             <p class="hint">Every card = a product you use daily, and the exact concept from phases 1–3 that powers it.
@@ -371,7 +384,12 @@
                 </div>
                 <div class="sc"><b>💸 Why long context costs more</b>Attention is O(n²): 2× the document =
   4× the compute. The reason Flash Attention &amp; KV caches exist.<div class="where">→ Scenario 6 (live)</div>
+                                <div class="sc"><b>⚡ Matrix multiply = the GPU loop</b>Every
+  neural net, every attention head, every tokenizer embedding trains on
+  this one triple loop. When a datacenter buys GPUs, it is buying
+  n³ loops per second.<div class="where">→ Scenario 7 (live) · matmul/</div>
                 </div>
+</div>
             </div>
         </div>
 
@@ -663,6 +681,39 @@ that's ≈ ${Math.ceil(1e6 / Math.max(ids.length, 1)).toLocaleString()} messages
         }
         ctxSlider.oninput = renderCtx;
         renderCtx();
+        /* ══════════ SCENARIO 7: matmul visualizer ══════════ */
+        const MMA = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+        const MMB = [[9, 8, 7], [6, 5, 4], [3, 2, 1]];
+        let mm_i = 0, mm_j = 0, mm_k = 0, mm_sum = 0;
+        function renderMM() {
+            let out = 'A (row ▶)              B (col ▶)             C so far\n';
+            for (let r = 0; r < 3; r++) {
+                let a = MMA[r].map((v, c) => (r === mm_i && c === mm_k) ? `[${v}]` : ` ${v} `).join('');
+                let b = MMB.map(row => row[mm_j]).map(v => ` ${v} `).join('');
+                let cRow = (r === mm_i && mm_j < 3) ? ' · ' : ' · ';
+                if (r === mm_i && mm_j < 3) cRow = String(mm_sum).padStart(3, ' ');
+                out += (r === mm_i ? '▶' : ' ') + a + '   ' + (r === mm_j ? '▶' : ' ') + b + '   ' + cRow + '\n';
+            }
+            out += `\nC[${mm_i}][${mm_j}] += A[${mm_i}][${mm_k}] · B[${mm_k}][${mm_j}] = ${MMA[mm_i][mm_k]}·${MMB[mm_k][mm_j]}   →   running total ${mm_sum}`;
+            if (mm_i === 2 && mm_j === 2 && mm_k === 0) out += '\n✅ C[2][2] done — C contains all 9 cells.';
+            mmOut.textContent = out;
+        }
+        function mmStep() {
+            if (mm_i === 2 && mm_j === 2 && mm_k === 0) return;   // done
+            mm_sum += MMA[mm_i][mm_k] * MMB[mm_k][mm_j];
+            if (mm_k < 2) { mm_k++; }
+            else {
+                mm_k = 0;
+                if (mm_j < 2) { mm_j++; mm_sum = 0; }
+                else { mm_j = 0; if (mm_i < 2) { mm_i++; mm_sum = 0; } }
+            }
+            renderMM();
+        }
+        function mmReset() { mm_i = 0; mm_j = 0; mm_k = 0; mm_sum = 0; renderMM(); }
+        document.getElementById('mmStep').onclick = mmStep;
+        document.getElementById('mmReset').onclick = mmReset;
+        renderMM();
+
     </script>
 </body>
 
