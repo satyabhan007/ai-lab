@@ -1,1016 +1,1228 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Lab — Interactive Playground</title>
-    <style>
-        :root {
-            --bg: #0f172a;
-            --card: #1e293b;
-            --ink: #e2e8f0;
-            --dim: #94a3b8;
-            --acc: #38bdf8;
-            --ok: #4ade80;
-            --bad: #f87171;
-            --warn: #facc15;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--ink);
-            font-family: 'Segoe UI', system-ui, sans-serif;
-        }
-
-        header {
-            padding: 24px 32px 8px;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: 26px;
-        }
-
-        h1 span {
-            color: var(--acc);
-        }
-
-        .sub {
-            color: var(--dim);
-            margin-top: 4px;
-        }
-
-        main {
-            padding: 16px 32px 48px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-            max-width: 1200px;
-            margin: auto;
-        }
-
-        .card {
-            background: var(--card);
-            border-radius: 14px;
-            padding: 18px 20px;
-        }
-
-        .card h2 {
-            margin: 0 0 4px;
-            font-size: 17px;
-        }
-
-        .card .hint {
-            color: var(--dim);
-            font-size: 12.5px;
-            margin: 0 0 12px;
-        }
-
-        .full {
-            grid-column: 1 / -1;
-        }
-
-        label {
-            font-size: 13px;
-            color: var(--dim);
-            display: block;
-            margin: 8px 0 2px;
-        }
-
-        input[type=range] {
-            width: 100%;
-        }
-
-        input[type=text],
-        textarea {
-            width: 100%;
-            background: #0b1220;
-            color: var(--ink);
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 8px 10px;
-            font-family: Consolas, monospace;
-            font-size: 13px;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 70px;
-        }
-
-        button {
-            background: var(--acc);
-            color: #04121f;
-            border: 0;
-            border-radius: 8px;
-            padding: 8px 14px;
-            font-weight: 700;
-            cursor: pointer;
-            margin: 6px 6px 0 0;
-        }
-
-        button.ghost {
-            background: #334155;
-            color: var(--ink);
-        }
-
-        .val {
-            color: var(--acc);
-            font-weight: 700;
-        }
-
-        .bar {
-            height: 22px;
-            background: #0b1220;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-top: 6px;
-            position: relative;
-        }
-
-        .bar>div {
-            height: 100%;
-        }
-
-        .bar .mid {
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background: #475569;
-        }
-
-        .stat {
-            font-family: Consolas, monospace;
-            font-size: 13px;
-            background: #0b1220;
-            border-radius: 8px;
-            padding: 8px 10px;
-            margin-top: 10px;
-            white-space: pre-wrap;
-        }
-
-        .chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-top: 8px;
-        }
-
-        .chip {
-            padding: 3px 8px;
-            border-radius: 7px;
-            font-family: Consolas, monospace;
-            font-size: 12px;
-            color: #04121f;
-            font-weight: 700;
-        }
-
-        .grid3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        .sc {
-            background: #0b1220;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 10px;
-            font-size: 12.5px;
-        }
-
-        .sc b {
-            display: block;
-            margin-bottom: 3px;
-            color: var(--acc);
-        }
-
-        .sc .where {
-            color: var(--dim);
-        }
-
-        .pill {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 99px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .pill.ok {
-            background: #14351f;
-            color: var(--ok);
-        }
-
-        .pill.bad {
-            background: #3b1a1a;
-            color: var(--bad);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12.5px;
-            margin-top: 8px;
-        }
-
-        td,
-        th {
-            padding: 3px 6px;
-            border-bottom: 1px solid #334155;
-            text-align: left;
-            font-family: Consolas, monospace;
-        }
-        /* ---- daily-life app badges ---- */
-        .daily {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin: 8px 0 0;
-            padding: 0;
-            list-style: none;
-        }
-        .daily li {
-            font-size: 11px;
-            padding: 3px 8px;
-            border-radius: 99px;
-            background: #0b1220;
-            border: 1px solid #334155;
-            color: var(--dim);
-        }
-        .daily li b {
-            color: var(--acc);
-            font-weight: 600;
-        }
-        .interact-hint {
-            font-size: 11px;
-            color: var(--ok);
-            margin: 4px 0 0;
-            font-style: italic;
-        }
-
-        .dashboard { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; }
-        .app-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
-        .app-cell { background: #0b1220; border-radius: 10px; padding: 10px; text-align: center; font-size: 12px; transition: transform 0.2s; cursor: default; }
-        .app-cell:hover { transform: translateY(-3px); background: #1a2540; }
-        .app-icon { font-size: 24px; display: block; margin-bottom: 4px; }
-        .app-cell b { display: block; color: #e2e8f0; font-size: 13px; }
-        .app-concept { color: #94a3b8; font-size: 11px; display: block; margin-top: 2px; }
-        .your-turn { background: #0b1220; border-left: 3px solid #38bdf8; padding: 10px 14px; margin-top: 12px; border-radius: 0 8px 8px 0; font-size: 13px; }
-        .your-turn code { background: #1e293b; padding: 2px 6px; border-radius: 4px; color: #facc15; }
-        .your-turn input { background: #1e293b; border: 1px solid #334155; color: #e2e8f0; border-radius: 6px; padding: 4px 8px; }
-
-        /* ═══ DAILY LIFE APP BADGES ═══ */
-        .app-badge {
-            display: inline-block;
-            background: #334155;
-            color: #e2e8f0;
-            padding: 3px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 600;
-            margin: 4px 4px 0 0;
-        }
-        .app-badge.netflix { background: #e50914; color: white; }
-        .app-badge.spotify { background: #1db954; color: white; }
-        .app-badge.google { background: #4285f4; color: white; }
-        .app-badge.amazon { background: #ff9900; color: black; }
-        .app-badge.instagram { background: #e1306c; color: white; }
-        .app-badge.tiktok { background: #25f4ee; color: black; }
-        .app-badge.gmail { background: #ea4335; color: white; }
-        .app-badge.zillow { background: #006aff; color: white; }
-        .app-badge.chatgpt { background: #10a37f; color: white; }
-
-        /* ═══ INTERACTIVE CHALLENGES ═══ */
-        .challenge {
-            background: #0b1220;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            padding: 12px;
-            margin-top: 12px;
-        }
-        .challenge-title {
-            color: #facc15;
-            font-weight: 700;
-            font-size: 13px;
-            margin-bottom: 6px;
-        }
-        .challenge-desc {
-            color: #94a3b8;
-            font-size: 12px;
-            margin-bottom: 8px;
-        }
-        .challenge-btn {
-            background: #facc15;
-            color: #04121f;
-            border: 0;
-            border-radius: 6px;
-            padding: 6px 12px;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .challenge-result {
-            margin-top: 8px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        /* ═══ PROGRESS TRACKER ═══ */
-        .progress-bar {
-            height: 8px;
-            background: #334155;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4ade80, #38bdf8);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-
-        /* ═══ CONCEPT MAP ═══ */
-        .concept-map {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-        }
-        .concept-node {
-            background: #1e293b;
-            border: 1px solid #38bdf8;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 12px;
-            text-align: center;
-        }
-        .concept-node .icon { font-size: 20px; display: block; }
-        .concept-arrow {
-            color: #38bdf8;
-            font-size: 20px;
-            align-self: center;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Lab — Interactive Playground · Satya</title>
+  <meta name="description" content="Hands-on AI playground: neural networks, tokenizers, attention, transformers, backprop — all running live in your browser. No libraries.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#060c18;--bg2:#0d1626;--card:#111827;--card2:#1a2540;
+      --border:#1e3050;--ink:#e2e8f0;--dim:#64748b;--dim2:#94a3b8;
+      --acc:#38bdf8;--acc2:#818cf8;--ok:#4ade80;--warn:#facc15;
+      --bad:#f87171;--purple:#a78bfa;--pink:#f472b6;--orange:#fb923c;
+      --teal:#2dd4bf;--r:14px;--shadow:0 4px 24px rgba(0,0,0,0.5);
+      --glow-acc:0 0 32px rgba(56,189,248,0.15);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
+    ::-webkit-scrollbar{width:8px;background:var(--bg2);}
+    ::-webkit-scrollbar-thumb{background:#1e3050;border-radius:4px;}
+    .hero{background:linear-gradient(135deg,#060c18 0%,#0d1a38 50%,#060c18 100%);border-bottom:1px solid var(--border);padding:40px 32px 32px;position:relative;overflow:hidden;}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 60% 50%,rgba(56,189,248,0.07) 0%,transparent 70%),radial-gradient(ellipse 40% 60% at 10% 80%,rgba(129,140,248,0.07) 0%,transparent 60%);pointer-events:none;}
+    .hero-inner{position:relative;max-width:1200px;margin:auto;}
+    .hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);color:var(--acc);font-size:11px;font-weight:700;letter-spacing:0.08em;padding:4px 10px;border-radius:99px;margin-bottom:12px;text-transform:uppercase;}
+    h1{font-size:clamp(24px,4vw,40px);font-weight:800;line-height:1.15;background:linear-gradient(135deg,#e2e8f0 0%,#38bdf8 60%,#818cf8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .hero-sub{color:var(--dim2);font-size:14px;margin-top:10px;max-width:640px;}
+    .hero-stats{display:flex;gap:24px;margin-top:20px;flex-wrap:wrap;}
+    .hero-stat{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim2);}
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 6px var(--ok);animation:pulse 2s infinite;}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+    .xp-bar-wrap{background:var(--bg2);border-bottom:1px solid var(--border);padding:10px 32px;position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:12px;}
+    .xp-label{font-size:11px;color:var(--dim2);white-space:nowrap;font-weight:600;}
+    .xp-track{flex:1;height:6px;background:var(--border);border-radius:99px;overflow:hidden;}
+    .xp-fill{height:100%;background:linear-gradient(90deg,var(--ok) 0%,var(--acc) 50%,var(--purple) 100%);border-radius:99px;width:0%;transition:width 0.6s cubic-bezier(0.34,1.56,0.64,1);}
+    .xp-badges{display:flex;gap:6px;}
+    .badge{font-size:18px;filter:grayscale(1) opacity(0.3);transition:all 0.4s;cursor:default;}
+    .badge.earned{filter:none;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+    @keyframes popIn{0%{transform:scale(0)}100%{transform:scale(1)}}
+    .nav-tabs{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 32px;display:flex;gap:0;overflow-x:auto;}
+    .nav-tabs::-webkit-scrollbar{height:3px;}
+    .nav-tab{padding:10px 16px;font-size:12px;font-weight:600;color:var(--dim2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s;user-select:none;}
+    .nav-tab:hover{color:var(--ink);}
+    .nav-tab.active{color:var(--acc);border-bottom-color:var(--acc);}
+    main{padding:24px 32px 64px;max-width:1200px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .lab-section{opacity:0;transform:translateY(24px);transition:opacity 0.5s ease,transform 0.5s ease;}
+    .lab-section.visible{opacity:1;transform:translateY(0);}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px;position:relative;overflow:hidden;transition:border-color 0.2s,box-shadow 0.2s;}
+    .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--acc),var(--purple));opacity:0;transition:opacity 0.3s;}
+    .card:hover{border-color:rgba(56,189,248,0.2);box-shadow:var(--glow-acc);}
+    .card:hover::before{opacity:1;}
+    .full{grid-column:1/-1;}
+    .card h2{font-size:16px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+    .card .hint{color:var(--dim2);font-size:12.5px;margin-bottom:14px;line-height:1.5;}
+    .section-header{grid-column:1/-1;padding:8px 0 4px;border-bottom:1px solid var(--border);margin-bottom:4px;}
+    .section-header h3{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim);}
+    .pill{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:700;}
+    .pill.ok{background:rgba(74,222,128,0.15);color:var(--ok);}
+    .pill.new{background:rgba(251,146,60,0.15);color:var(--orange);}
+    .pill.pro{background:rgba(167,139,250,0.15);color:var(--purple);}
+    .app-badge{display:inline-block;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--dim2);padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;margin:3px 3px 0 0;}
+    .app-badge.netflix{background:rgba(229,9,20,0.15);border-color:rgba(229,9,20,0.3);color:#f87171;}
+    .app-badge.spotify{background:rgba(29,185,84,0.15);border-color:rgba(29,185,84,0.3);color:#4ade80;}
+    .app-badge.google{background:rgba(66,133,244,0.15);border-color:rgba(66,133,244,0.3);color:#818cf8;}
+    .app-badge.chatgpt{background:rgba(16,163,127,0.15);border-color:rgba(16,163,127,0.3);color:var(--teal);}
+    .app-badge.amazon{background:rgba(255,153,0,0.15);border-color:rgba(255,153,0,0.3);color:var(--warn);}
+    label{font-size:12px;font-weight:600;color:var(--dim2);display:block;margin:10px 0 4px;}
+    label .val{color:var(--acc);font-family:'JetBrains Mono',monospace;}
+    input[type=range]{width:100%;accent-color:var(--acc);cursor:pointer;height:4px;border-radius:99px;}
+    input[type=text],textarea,select{width:100%;background:var(--bg2);color:var(--ink);border:1px solid var(--border);border-radius:8px;padding:8px 11px;font-family:'JetBrains Mono',monospace;font-size:12.5px;outline:none;transition:border-color 0.2s;}
+    input[type=text]:focus,textarea:focus,select:focus{border-color:var(--acc);}
+    textarea{resize:vertical;min-height:72px;}
+    select{cursor:pointer;}
+    button{background:var(--acc);color:#03080f;border:0;border-radius:8px;padding:7px 14px;font-weight:700;font-size:12.5px;cursor:pointer;margin:5px 5px 0 0;transition:transform 0.1s,box-shadow 0.2s,background 0.2s;font-family:'Inter',sans-serif;}
+    button:hover{box-shadow:0 0 16px rgba(56,189,248,0.4);transform:translateY(-1px);}
+    button:active{transform:translateY(0);}
+    button.ghost{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--ink);}
+    button.ghost:hover{box-shadow:none;background:rgba(255,255,255,0.1);}
+    button.warn-btn{background:var(--warn);color:#030a04;}
+    button.warn-btn:hover{box-shadow:0 0 16px rgba(250,204,21,0.4);}
+    button.purple-btn{background:var(--purple);color:#030312;}
+    .stat{font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:10px;white-space:pre-wrap;line-height:1.6;min-height:32px;}
+    .bar{height:20px;background:var(--bg2);border-radius:8px;overflow:hidden;margin-top:8px;position:relative;}
+    .bar>div{height:100%;border-radius:8px;transition:width 0.3s,background 0.3s;}
+    .bar .mid{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--border);}
+    .chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+    .chip{padding:3px 8px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#03080f;font-weight:700;transition:transform 0.1s;}
+    .chip:hover{transform:scale(1.1);}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+    .app-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;}
+    .app-cell{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 10px;text-align:center;font-size:12px;cursor:default;transition:transform 0.2s,border-color 0.2s,box-shadow 0.2s;}
+    .app-cell:hover{transform:translateY(-4px);border-color:rgba(56,189,248,0.3);box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+    .app-icon{font-size:24px;display:block;margin-bottom:5px;}
+    .app-cell b{display:block;color:var(--ink);font-size:12.5px;}
+    .app-concept{color:var(--dim2);font-size:11px;display:block;margin-top:3px;}
+    .sc{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:12.5px;transition:border-color 0.2s;}
+    .sc:hover{border-color:rgba(56,189,248,0.25);}
+    .sc b{display:block;margin-bottom:4px;color:var(--acc);font-size:13px;}
+    .sc .where{color:var(--dim);font-size:11px;margin-top:6px;}
+    .challenge{background:rgba(250,204,21,0.05);border:1px solid rgba(250,204,21,0.2);border-left:3px solid var(--warn);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:14px;font-size:12.5px;}
+    .challenge b{color:var(--warn);}
+    .insight{background:rgba(56,189,248,0.05);border:1px solid rgba(56,189,248,0.2);border-left:3px solid var(--acc);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:10px;font-size:12.5px;color:var(--dim2);}
+    .insight b{color:var(--acc);}
+    .interact-hint{font-size:11.5px;color:var(--ok);margin:4px 0 8px;font-style:italic;display:flex;align-items:center;gap:4px;}
+    canvas{width:100%;border-radius:8px;margin-top:10px;display:block;background:var(--bg2);}
+    table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;}
+    td,th{padding:4px 8px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;}
+    th{color:var(--dim2);font-weight:600;}
+    .daily{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 0;padding:0;list-style:none;}
+    .daily li{font-size:11px;padding:3px 8px;border-radius:99px;background:var(--bg2);border:1px solid var(--border);color:var(--dim2);}
+    .daily li b{color:var(--acc);}
+    footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 32px;text-align:center;margin-top:40px;}
+    footer a{color:var(--acc);text-decoration:none;}
+    footer a:hover{text-decoration:underline;}
+    @media(max-width:700px){
+      main{grid-template-columns:1fr;padding:16px;}
+      .hero{padding:28px 16px 24px;}
+      .xp-bar-wrap{padding:8px 16px;}
+      .nav-tabs{padding:0 16px;}
+      .app-grid{grid-template-columns:repeat(2,1fr);}
+      .grid3{grid-template-columns:1fr;}
+    }
+  </style>
 </head>
-
 <body>
-    <header>
-        <h1>🧪 AI Lab — <span>Interactive Playground</span></h1>
-        <div class="sub">Companion to micrograd/ + tokenizer/ + attention/ + matmul/ · everything below is the SAME code you built, running
-            live in your browser · no libraries</div>
-    </header>
-    <main>
-        <!-- ══════════ DAILY LIFE DASHBOARD ══════════ -->
-        <div class="card full dashboard">
-            <h2>📱 These 7 concepts power the apps you use every day</h2>
-            <p class="hint">Every time you open Gmail, ChatGPT, Spotify, or Google Translate — these exact algorithms are running. Hover each app to see which concept it uses.</p>
-            <div class="app-grid">
-                <div class="app-cell"><span class="app-icon">📧</span><b>Gmail</b><span class="app-concept">Spam filter → Scenario 2</span></div>
-                <div class="app-cell"><span class="app-icon">💬</span><b>ChatGPT</b><span class="app-concept">Tokenizer + Attention → Scenarios 3,4</span></div>
-                <div class="app-cell"><span class="app-icon">🌐</span><b>Google Translate</b><span class="app-concept">Attention → Scenario 4</span></div>
-                <div class="app-cell"><span class="app-icon">🎵</span><b>Spotify</b><span class="app-concept">Temperature sampling → Scenario 5</span></div>
-                <div class="app-cell"><span class="app-icon">🏠</span><b>Zillow</b><span class="app-concept">Regression → Scenario 2</span></div>
-                <div class="app-cell"><span class="app-icon">🛒</span><b>Amazon</b><span class="app-concept">Recommendation → Scenario 2</span></div>
-                <div class="app-cell"><span class="app-icon">📸</span><b>Face ID</b><span class="app-concept">Neural net → Scenario 1</span></div>
-                <div class="app-cell"><span class="app-icon">🗣️</span><b>Siri/Alexa</b><span class="app-concept">Attention + tokenizer → Scenarios 3,4</span></div>
-            </div>
-        </div>
+<header>
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge"><span style="width:6px;height:6px;border-radius:50%;background:var(--ok);display:inline-block;"></span> 12 Live Labs · No Libraries · All Concepts</div>
+      <h1>🧪 AI Lab — Interactive Playground</h1>
+      <p class="hero-sub">Every algorithm powering ChatGPT, Gmail, Spotify, Google Translate — running live in your browser. Drag sliders, click steps, earn XP.</p>
+      <div class="hero-stats">
+        <div class="hero-stat"><span class="dot"></span> Zero backend — pure JS</div>
+        <div class="hero-stat">🎓 Neurons → Backprop → Attention → Transformers</div>
+        <div class="hero-stat">⚡ Lazy-loaded for instant first render</div>
+      </div>
+    </div>
+  </div>
+</header>
 
-
-        <!-- ══════════ SCENARIO 1: UMBRELLA ══════════ -->
-        <div class="card">
-            <h2>☂ Scenario 1 — The Umbrella Neuron <span class="pill ok">live</span></h2>
-            <p class="hint">A trained neuron with FROZEN weights (w=[+2.0,−0.5,+1.0], b=−0.3) decides for you.</p>
-            <span class="app-badge">📧 Gmail spam filter</span>
-            <span class="app-badge">💳 Credit card fraud check</span>
-            <span class="app-badge">🔔 "Cancel subscription?" prompts</span>
-            <span class="app-badge">🏥 Triage: urgent or not?</span>
-            <ul class="daily"><li><b>📱 Weather apps</b> — Apple Weather, AccuWeather</li><li><b>💳 Credit pre-check</b> — instant yes/no</li><li><b>🔔 Churn prediction</b> — cancel subscription?</li></ul>
-            <p class="interact-hint">👆 Drag the sliders — find the exact point where the verdict flips!</p>
-            <label>Is it cloudy? <span class="val" id="v1">0.8</span></label>
-            <input type="range" id="x1" title="Is it cloudy" min="0" max="1" step="0.05" value="0.8">
-            <label>Is it summer? <span class="val" id="v2">0.7</span></label>
-            <input type="range" id="x2" title="Is it summer" min="0" max="1" step="0.05" value="0.7">
-            <label>Did it rain yesterday? <span class="val" id="v3">0.9</span></label>
-            <input type="range" id="x3" title="Did it rain yesterday" min="0" max="1" step="0.05" value="0.9">
-            <div class="bar">
-                <div id="gauge" style="width:50%;background:var(--acc)"></div>
-                <div class="mid"></div>
-            </div>
-            <div class="stat" id="umbOut"></div>
-            <div class="challenge"><b>🎯 Challenge:</b> Find the exact cloudy value where the verdict flips from "bring umbrella" to "leave it" (try 0.45–0.55). That flip line is the <i>decision boundary</i> — every classifier has one.</div>
-        </div>
-
-        <!-- ══════════ SCENARIO 2: TRAIN LIVE ══════════ -->
-        <div class="card">
-            <h2>🏋 Scenario 2 — Train a Network LIVE <span class="pill ok">live</span></h2>
-            <p class="hint">Real task: learn 5 weather→umbrella examples. 41 knobs, hinge loss. Watch loss fall — then drag the learning rate and see the shower-knob effect.</p>
-            <span class="app-badge">📧 Gmail spam filter</span>
-            <span class="app-badge">🏠 Zillow price estimate</span>
-            <span class="app-badge">📱 Face ID unlock</span>
-            <span class="app-badge">🎬 Netflix recommendations</span>
-            <ul class="daily"><li><b>📧 Gmail spam filter</b> — trains on your mail</li><li><b>🏠 Zillow pricing</b> — learns house values</li><li><b>🎬 Netflix recs</b> — learns what you like</li></ul>
-            <p class="interact-hint">👆 Click +100 steps, then drag lr to 0.5 (bounces!) then 0.005 (crawls)</p>
-            <label>Learning rate (step size) <span class="val" id="lrV">0.05</span></label>
-            <input type="range" id="lr" title="Learning rate" min="0.005" max="0.5" step="0.005" value="0.05">
-            <button id="b1">+1 step</button><button id="b10">+10 steps</button><button id="b100">+100</button>
-            <button class="ghost" id="reset">↺ reset weights</button>
-            <canvas id="chart" width="440" height="120"
-                style="width:100%;background:#0b1220;border-radius:8px;margin-top:10px"></canvas>
-            <div class="stat" id="trainStat"></div>
-            <table id="predTable"></table>
-            <div class="challenge"><b>🎯 Challenge:</b> Set learning rate to 0.5 and train — watch the loss BOUNCE (the shower knob!). Then set it to 0.005 — it crawls. Find the highest LR that still converges. That's the art of tuning.</div>
-        </div>
-
-        <!-- ══════════ SCENARIO 3: TOKENIZER LAB ══════════ -->
-        <div class="card full">
-            <h2>🔢 Scenario 3 — Tokenizer Lab + API Cost Calculator <span class="pill ok">live</span></h2>
-            <p class="hint">Real task: this is literally how ChatGPT bills you — you pay per TOKEN, not per word.</p>
-            <span class="app-badge">💬 ChatGPT / Claude billing</span>
-            <span class="app-badge">⌨️ Phone autocomplete</span>
-            <span class="app-badge">🌐 Google Translate</span>
-            <span class="app-badge">🔍 Google Search indexing</span>
-            <ul class="daily"><li><b>💬 ChatGPT / Claude</b> — tokenizes every message</li><li><b>⌨️ Phone keyboard</b> — predicts next token</li><li><b>🌐 Google Translate</b> — handles 100+ languages</li></ul>
-            <p class="interact-hint">👆 Type emoji, Hindi, code — nothing is "unknown" (byte fallback!)</p>
-            <div class="grid3">
-                <div>
-                    <label>Training corpus (edit me!)</label>
-                    <textarea title="Training corpus"
-                        id="corpus">the cat sat on the mat. the cat saw the dog. the dog ran to the cat. the cat and the dog sat. we learn to build ai from scratch. we learn to code. we build to learn. the more we build, the more we learn. </textarea>
-                    <label>Vocabulary size <span class="val" id="vsV">300</span> <span style="color:#64748b">(256 bytes
-                            + merges)</span></label>
-                    <input type="range" id="vs" title="Vocabulary size" min="260" max="500" step="10" value="300">
-                    <button id="trainTok">⚡ Train tokenizer</button>
-                    <div class="stat" id="mergeLog">not trained yet</div>
-                </div>
-                <div style="grid-column:span 2">
-                    <label>Type any text to tokenize (live)</label>
-                    <input type="text" id="testText" title="Text to tokenize" value="the cat sat on the mat."
-                        oninput="renderTokens()">
-                    <div class="chips" id="chips"></div>
-                    <div class="stat" id="tokStat"></div>
-                    <div class="stat" id="costStat" style="border:1px solid #334155"></div>
-                </div>
-            </div>
-            <div class="challenge"><b>🎯 Challenge:</b> Type an emoji like "🚀" — it falls back to raw bytes (4 tokens for one emoji!). Now type "the" — it's 1 token. That's why GPT charges more for emoji-heavy messages.</div>
-        </div>
-
-        <!-- ══════════ SCENARIO 4: ATTENTION VISUALIZER ══════════ -->
-        <div class="card">
-            <h2>👀 Scenario 4 — Attention Visualizer <span class="pill ok">live</span></h2>
-            <p class="hint">The sentence every AI paper cites: what does "it" refer to? Click an ending — the bars are REAL softmax attention weights.</p>
-            <span class="app-badge">🌐 Google Translate</span>
-            <span class="app-badge">📝 Grammarly suggestions</span>
-            <span class="app-badge">🗣️ Siri / Alexa understanding</span>
-            <span class="app-badge">📧 Gmail Smart Reply</span>
-            <ul class="daily"><li><b>🔍 Google Search</b> — attends to query words</li><li><b>💬 ChatGPT</b> — reads your whole conversation</li><li><b>📧 Gmail Smart Reply</b> — attends to email context</li></ul>
-            <p class="interact-hint">👆 Click TIRED vs WIDE — watch attention shift from animal to street</p>
-            <label>Sentence: <em>"the animal didn't cross the street because it was too …"</em></label>
-            <button id="attTired">…TIRED 🐫</button>
-            <button id="attWide">…WIDE 🛣️</button>
-            <div class="stat" id="attOut">click an ending ↑</div>
-            <div class="challenge"><b>🎯 Challenge:</b> Click TIRED → "it" looks at "animal" 60%+. Click WIDE → "it" flips to "street" 55%+. Same sentence, different meaning — attention is how AI reads context. This is the engine behind Google Translate.</div>
-        </div>
-
-        <!-- ══════════ SCENARIO 5: TEMPERATURE EXPLORER ══════════ -->
-        <div class="card">
-            <h2>🌡 Scenario 5 — Temperature Explorer <span class="pill ok">live</span></h2>
-            <p class="hint">This is ChatGPT's creativity dial, exposed. The model's honest guess is fixed — the temperature decides how adventurous the sampling is.</p>
-            <span class="app-badge">💬 ChatGPT creativity</span>
-            <span class="app-badge">🎨 DALL-E image variety</span>
-            <span class="app-badge">🎵 Spotify Discover Weekly</span>
-            <span class="app-badge">📝 Gmail Smart Compose</span>
-            <label>Temperature <span class="val" id="tempV">1.00</span>
-                <span style="color:#64748b">(0.1 = laser · 3.0 = chaos)</span></label>
-            <input type="range" id="tempSlider" min="0.1" max="3" step="0.05" value="1">
-            <div class="stat" id="tempOut"></div>
-            <div class="stat" id="tempSample"></div>
-        </div>
-
-        <!-- ══════════ SCENARIO 6: CONTEXT COST (O(n²)) ══════════ -->
-        <div class="card">
-            <h2>🧮 Scenario 6 — Context Cost: attention is O(n²) <span class="pill ok">live</span></h2>
-            <p class="hint">Why long context costs more than linear: EVERY token must score EVERY token. Drag the context length and watch the pairwise score count explode.</p>
-            <span class="app-badge">💬 ChatGPT long conversations</span>
-            <span class="app-badge">📄 Claude 100K document upload</span>
-            <span class="app-badge">⚡ Flash Attention (why it exists)</span>
-            <span class="app-badge">🧠 KV Cache (vLLM)</span>
-            <label>Context length: <span class="val" id="ctxV">1024</span> tokens</label>
-            <input type="range" id="ctxSlider" min="128" max="32768" step="128" value="1024">
-            <div class="stat" id="ctxOut"></div>
-        </div>
-
-                <!-- ══════════ SCENARIO 7: MATMUL VISUALIZER ══════════ -->
-        <div class="card">
-            <h2>🧲 Scenario 7 — MatMul Visualizer <span class="pill ok">live</span></h2>
-            <p class="hint">The single loop every GPU is running right now:
-                C[i][j] += A[i][k] · B[k][j]. Step through the multiply-accumulate
-                and watch one cell of C fill in — billions of these sit behind
-                every ChatGPT reply.</p>
-            <label>A = <em>[[1,2,3],[4,5,6],[7,8,9]]</em> &nbsp; B = <em>[[9,8,7],[6,5,4],[3,2,1]]</em></label>
-            <button id="mmStep">▶ step</button>
-            <button class="ghost" id="mmReset">↺ reset</button>
-            <div class="stat" id="mmOut">step through the loop ↑</div>
-        </div>
-
-<!-- ══════════ REAL-WORLD MAP ══════════ -->
-        <div class="card full">
-            <h2>🌍 Where You Just Used These Ideas In The Real World</h2>
-            <p class="hint">Every card = a product you use daily, and the exact concept from phases 1–3 that powers it.
-            </p>
-            <div class="grid3">
-                <div class="sc"><b>📧 Spam filter</b>Neuron + hinge loss: features ("free money", links) → spam score.
-                    Gmail's first line of defense is exactly this shape.<div class="where">→ Scenario 2 (train live)
-                    </div>
-                </div>
-                <div class="sc"><b>🏠 House price estimate</b>MSE regression: size/location → price. Zillow-style
-                    estimators start here.<div class="where">→ scenarios_tester.py #8</div>
-                </div>
-                <div class="sc"><b>☂ Rule-of-thumb apps</b>Frozen-weight neuron = any instant yes/no decision (umbrella,
-                    outfit, cancel subscription?).<div class="where">→ Scenario 1 (live)</div>
-                </div>
-                <div class="sc"><b>💬 ChatGPT billing</b>You pay per TOKEN. Our lab counts tokens of your message
-                    exactly like the API meter does.<div class="where">→ Scenario 3 (live)</div>
-                </div>
-                <div class="sc"><b>⌨️ Autocomplete</b>Common chunks become single tokens → the model predicts in bigger,
-                    smarter steps.<div class="where">→ tokenizer/step2</div>
-                </div>
-                <div class="sc"><b>🌐 Any language, no crashes</b>Byte-level BPE: emoji, Hindi, code — nothing is
-                    "unknown". Worst case = raw bytes.<div class="where">→ tokenizer/step3 (6/6 PASS)</div>
-                </div>
-                <div class="sc"><b>👁️ How ChatGPT knows who "it" is</b>Self-attention weights link pronouns to
-  the words they refer to — the mechanic behind translation &amp; summarization.<div class="where">→ Scenario 4 (live)</div>
-                </div>
-                <div class="sc"><b>🎨 The temperature knob</b>Every chat UI's "creativity" slider is softmax
-  temperature: low = focused answers, high = surprising ones.<div class="where">→ Scenario 5 (live)</div>
-                </div>
-                <div class="sc"><b>💸 Why long context costs more</b>Attention is O(n²): 2× the document =
-  4× the compute. The reason Flash Attention &amp; KV caches exist.<div class="where">→ Scenario 6 (live)</div>
-                                <div class="sc"><b>⚡ Matrix multiply = the GPU loop</b>Every
-  neural net, every attention head, every tokenizer embedding trains on
-  this one triple loop. When a datacenter buys GPUs, it is buying
-  n³ loops per second.<div class="where">→ Scenario 7 (live) · matmul/</div>
-                </div>
+<div class="xp-bar-wrap">
+  <span class="xp-label">🏆 XP</span>
+  <div class="xp-track"><div class="xp-fill" id="xpFill"></div></div>
+  <span class="xp-label" id="xpText">0 / 1200</span>
+  <div class="xp-badges">
+    <span class="badge" data-xp="100" title="First Interaction">🧠</span>
+    <span class="badge" data-xp="200" title="Neuron Explorer">☂️</span>
+    <span class="badge" data-xp="350" title="Gradient Surfer">🏄</span>
+    <span class="badge" data-xp="500" title="Tokenizer Wizard">🔢</span>
+    <span class="badge" data-xp="650" title="Attention Master">👀</span>
+    <span class="badge" data-xp="800" title="Backprop Black Belt">🥋</span>
+    <span class="badge" data-xp="950" title="Embedding Navigator">🗺️</span>
+    <span class="badge" data-xp="1100" title="Transformer Sage">🔮</span>
+    <span class="badge" data-xp="1200" title="AI Lab Graduate">🎓</span>
+  </div>
 </div>
-            </div>
-        </div>
 
-        <!-- ══════════ SPOT THE AI QUIZ ══════════ -->
-    <section class="card full" style="margin-top:24px;background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border:1px solid #334155;">
-        <h2>🎯 Spot the AI — Interactive Quiz <span class="pill ok">live</span></h2>
-        <p class="hint">10 everyday apps — can you spot which use AI? Click each to reveal. Test yourself!</p>
-        <div class="app-grid" id="quizGrid" style="margin-top:12px;"></div>
-        <div class="stat" id="quizScore" style="margin-top:12px;">Score: 0/10 — click each card to reveal</div>
-        <button id="quizReset" style="margin-top:8px;">↺ Reset Quiz</button>
-    </section>
+<nav class="nav-tabs">
+  <div class="nav-tab active" data-target="sec-foundations">Foundations</div>
+  <div class="nav-tab" data-target="sec-gradient">Gradient Descent</div>
+  <div class="nav-tab" data-target="sec-tokenizer">Tokenizer</div>
+  <div class="nav-tab" data-target="sec-attention">Attention</div>
+  <div class="nav-tab" data-target="sec-temperature">Temperature</div>
+  <div class="nav-tab" data-target="sec-backprop">Backprop</div>
+  <div class="nav-tab" data-target="sec-embeddings">Embeddings</div>
+  <div class="nav-tab" data-target="sec-transformer">Transformer</div>
+  <div class="nav-tab" data-target="sec-matmul">MatMul &amp; O(n²)</div>
+  <div class="nav-tab" data-target="sec-quiz">Quiz &amp; Sandbox</div>
+</nav>
 
-    <!-- ══════════ FREE-PLAY SANDBOX ══════════ -->
-    <section class="card full" style="margin-top:24px;">
-        <h2>🧪 Free-Play Sandbox <span class="pill ok">live</span></h2>
-        <p class="hint">Mix and match! Type a sentence AND pick an app to see how AI processes it.</p>
-        <div class="grid3">
-            <div>
-                <label>Your sentence</label>
-                <input type="text" id="sandboxInput" value="I love this movie!" oninput="runSandbox()" style="width:100%;">
-                <label style="margin-top:8px;">Pick an app</label>
-                <select id="sandboxApp" onchange="runSandbox()" style="width:100%;background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:6px;padding:6px;">
-                    <option value="sentiment">📊 Sentiment (Netflix)</option>
-                    <option value="translate">🌐 Translation (Google)</option>
-                    <option value="recommend">🎵 Recommendation (Spotify)</option>
-                    <option value="search">🔍 Search (Google)</option>
-                    <option value="voice">🗣️ Voice (Siri)</option>
-                </select>
-            </div>
-            <div style="grid-column:span 2;">
-                <label>Pipeline output</label>
-                <div class="stat" id="sandboxOut" style="min-height:120px;">Type a sentence to see the AI pipeline...</div>
-            </div>
-        </div>
-    </section>
+<main>
+
+<!-- DASHBOARD -->
+<div class="card full lab-section" id="sec-dashboard">
+  <h2>📱 These 12 concepts power every app you use</h2>
+  <p class="hint">Hover each app to see which lab explains it. Every algorithm below runs live in your browser right now.</p>
+  <div class="app-grid">
+    <div class="app-cell"><span class="app-icon">📧</span><b>Gmail</b><span class="app-concept">Spam filter → Labs 1&amp;2</span></div>
+    <div class="app-cell"><span class="app-icon">💬</span><b>ChatGPT</b><span class="app-concept">Tokenizer+Attention+Temp → Labs 4,5,7</span></div>
+    <div class="app-cell"><span class="app-icon">🌐</span><b>Google Translate</b><span class="app-concept">Transformer Encoder-Decoder → Lab 10</span></div>
+    <div class="app-cell"><span class="app-icon">🎵</span><b>Spotify</b><span class="app-concept">Embeddings+Similarity → Lab 9</span></div>
+    <div class="app-cell"><span class="app-icon">🏠</span><b>Zillow</b><span class="app-concept">Gradient Descent → Lab 3</span></div>
+    <div class="app-cell"><span class="app-icon">🛒</span><b>Amazon</b><span class="app-concept">Matrix Factorization → Lab 11</span></div>
+    <div class="app-cell"><span class="app-icon">📸</span><b>Face ID</b><span class="app-concept">Neural Net → Lab 1</span></div>
+    <div class="app-cell"><span class="app-icon">🗣️</span><b>Siri/Alexa</b><span class="app-concept">Transformer → Lab 10</span></div>
+  </div>
+  <div class="insight" style="margin-top:14px;"><b>Key insight:</b> Every app is built from the same 5 primitives: <b>neurons → loss → backprop → embeddings → attention</b>. You'll build all of them below.</div>
+</div>
+
+<!-- SECTION: FOUNDATIONS -->
+<div class="section-header lab-section" id="sec-foundations"><h3>⚡ Foundations · Labs 1–2</h3></div>
+
+<!-- LAB 1: UMBRELLA NEURON -->
+<div class="card lab-section" id="lab-umbrella">
+  <h2>☂️ Lab 1 — The Umbrella Neuron <span class="pill ok">live</span></h2>
+  <p class="hint">A single trained neuron with frozen weights <code>w=[+2.0,−0.5,+1.0], b=−0.3</code> makes a binary decision using tanh activation. This is the atom of every neural network.</p>
+  <span class="app-badge">📱 Weather apps</span><span class="app-badge">💳 Credit pre-check</span><span class="app-badge">🔔 Churn prediction</span><span class="app-badge">🏥 Medical triage</span>
+  <p class="interact-hint">👆 Drag sliders — find the exact point where the verdict flips (the <em>decision boundary</em>)</p>
+  <label>Is it cloudy? <span class="val" id="v1">0.80</span></label>
+  <input type="range" id="x1" min="0" max="1" step="0.05" value="0.8" title="Cloudy">
+  <label>Is it summer? <span class="val" id="v2">0.70</span></label>
+  <input type="range" id="x2" min="0" max="1" step="0.05" value="0.7" title="Summer">
+  <label>Did it rain yesterday? <span class="val" id="v3">0.90</span></label>
+  <input type="range" id="x3" min="0" max="1" step="0.05" value="0.9" title="Rain yesterday">
+  <label>Custom weights (w1,w2,w3): <span class="val" id="cwLabel">2.0, -0.5, 1.0</span></label>
+  <input type="text" id="customW" value="2.0,-0.5,1.0" placeholder="2.0,-0.5,1.0">
+  <div class="bar"><div id="gauge" style="width:50%;background:var(--acc)"></div><div class="mid"></div></div>
+  <div class="stat" id="umbOut"></div>
+  <div class="challenge"><b>🎯 Challenge:</b> Find the exact cloudy value where the verdict flips (try 0.45–0.55). That's the <em>decision boundary</em>. Try setting w3=0 — which feature loses all influence?</div>
+</div>
+
+<!-- LAB 2: TRAIN LIVE -->
+<div class="card lab-section" id="lab-train">
+  <h2>🏋️ Lab 2 — Train a Network LIVE <span class="pill ok">live</span></h2>
+  <p class="hint">Real task: learn 5 weather→umbrella examples. MLP(3→4→4→1) + hinge loss. Watch loss fall — then abuse the learning rate to see the shower-knob effect.</p>
+  <span class="app-badge netflix">Gmail spam</span><span class="app-badge spotify">Zillow pricing</span><span class="app-badge">📱 Face ID</span>
+  <p class="interact-hint">👆 Click +100 steps, then drag lr to 0.5 (bounces!), then 0.005 (crawls). Find the sweet spot.</p>
+  <label>Learning rate <span class="val" id="lrV">0.050</span> <span style="color:var(--dim);font-size:11px">(0.005=slow · 0.5=chaos)</span></label>
+  <input type="range" id="lr" min="0.005" max="0.5" step="0.005" value="0.05" title="Learning rate">
+  <div style="margin-top:6px;">
+    <button id="b1">+1 step</button><button id="b10">+10 steps</button><button id="b100">+100</button><button id="b1000">+1000</button>
+    <button class="ghost" id="reset">↺ reset</button>
+  </div>
+  <canvas id="chart" height="110"></canvas>
+  <div class="stat" id="trainStat"></div>
+  <table id="predTable"></table>
+  <div class="challenge"><b>🎯 Challenge:</b> lr=0.5 → loss bounces (shower knob!). lr=0.005 → crawls. Find the highest lr that still converges (~0.05). This is the art of hyperparameter tuning.</div>
+</div>
+
+<!-- SECTION: GRADIENT DESCENT -->
+<div class="section-header lab-section" id="sec-gradient"><h3>🏔️ Gradient Descent · Lab 3</h3></div>
+
+<!-- LAB 3: GRADIENT DESCENT VISUALIZER (NEW) -->
+<div class="card full lab-section" id="lab-gradient">
+  <h2>⛰️ Lab 3 — Gradient Descent Visualizer <span class="pill new">new</span></h2>
+  <p class="hint">Watch a ball roll down a loss landscape in real time. This is exactly what happens inside GPT when it trains — billions of parameters adjusting by tiny gradient steps.</p>
+  <div class="grid2">
+    <div>
+      <span class="app-badge chatgpt">GPT-4 training</span><span class="app-badge">🤖 AlphaGo</span><span class="app-badge">🧬 AlphaFold</span>
+      <p class="interact-hint">👆 Click anywhere on the landscape to place the ball, then step</p>
+      <label>Learning rate <span class="val" id="gdLrV">0.10</span></label>
+      <input type="range" id="gdLr" min="0.01" max="1.0" step="0.01" value="0.1" title="Gradient descent learning rate">
+      <label>Landscape</label>
+      <select id="gdLand" title="Loss landscape">
+        <option value="bowl">Smooth bowl (convex — always works)</option>
+        <option value="sincos">sin+cos bumps (local minima!)</option>
+        <option value="saddle">Saddle point (tricky!)</option>
+        <option value="ravine">Ravine (slow without momentum)</option>
+      </select>
+      <div style="margin-top:8px;">
+        <button id="gdStep">▶ 1 Step</button><button id="gdRun">▶▶ Auto</button><button class="ghost" id="gdReset">↺ Reset</button>
+      </div>
+      <div class="stat" id="gdOut">Click landscape to place ball, then step</div>
+      <div class="insight"><b>Key insight:</b> The gradient is the slope of the loss. SGD moves a tiny bit downhill each step. Too large lr → overshoot. Too small → slow. This is why Adam optimizer was invented (adaptive lr per parameter).</div>
+    </div>
+    <div>
+      <canvas id="gdCanvas" height="280" style="cursor:crosshair;border-radius:8px;margin-top:0;"></canvas>
+      <canvas id="gdLossCanvas" height="80" style="border-radius:8px;margin-top:8px;background:var(--bg2);"></canvas>
+    </div>
+  </div>
+  <div class="challenge"><b>🎯 Challenge:</b> Select "sin+cos bumps" → start from different positions → you get stuck in different local minima. Select "saddle point" → the ball drifts sideways. This is why Adam uses momentum.</div>
+</div>
+
+<!-- SECTION: TOKENIZER -->
+<div class="section-header lab-section" id="sec-tokenizer"><h3>🔢 Tokenizer · Lab 4</h3></div>
+
+<!-- LAB 4: TOKENIZER (upgraded) -->
+<div class="card full lab-section" id="lab-tokenizer">
+  <h2>🔢 Lab 4 — BPE Tokenizer + API Cost Calculator <span class="pill ok">live</span></h2>
+  <p class="hint">This is literally how ChatGPT bills you — you pay per TOKEN, not per word. Byte-Pair Encoding (BPE) iteratively merges the most frequent byte pairs until the vocabulary is full.</p>
+  <div class="grid3">
+    <div>
+      <span class="app-badge chatgpt">ChatGPT billing</span><span class="app-badge google">Google Translate</span><span class="app-badge">⌨️ Autocomplete</span>
+      <p class="interact-hint">👆 Type emoji, Hindi, code — nothing is "unknown" (byte fallback!)</p>
+      <label>Training corpus (edit me!)</label>
+      <textarea id="corpus">the cat sat on the mat. the cat saw the dog. the dog ran to the cat. the cat and the dog sat. we learn to build ai from scratch. we learn to code. we build to learn. the more we build, the more we learn.</textarea>
+      <label>Vocabulary size <span class="val" id="vsV">300</span> <span style="color:var(--dim);font-size:10px">(256 bytes + merges)</span></label>
+      <input type="range" id="vs" min="260" max="500" step="10" value="300" title="Vocabulary size">
+      <button id="trainTok">⚡ Train tokenizer</button>
+      <div class="stat" id="mergeLog">not trained yet — click Train</div>
+    </div>
+    <div style="grid-column:span 2">
+      <label>Type any text to tokenize (live)</label>
+      <input type="text" id="testText" value="the cat sat on the mat." oninput="renderTokens()" title="Text to tokenize">
+      <div class="chips" id="chips"></div>
+      <div class="stat" id="tokStat"></div>
+      <div class="stat" id="costStat" style="border-color:rgba(250,204,21,0.3)"></div>
+      <div class="insight" style="margin-top:10px;"><b>Why BPE?</b> Common substrings ("the", "ing", "tion") become single tokens — the model predicts in bigger, smarter steps. Emoji fall back to 3-4 raw bytes each — that's why emoji-heavy messages cost more.</div>
+    </div>
+  </div>
+  <div class="challenge"><b>🎯 Challenge:</b> Type 🚀 → 4 tokens for one emoji! Type "the" → 1 token. Type a Python function → tokens vs chars. Why does code compress less than English?</div>
+</div>
+
+<!-- SECTION: ATTENTION -->
+<div class="section-header lab-section" id="sec-attention"><h3>👀 Attention · Labs 5–6</h3></div>
+
+<!-- LAB 5: ATTENTION VISUALIZER (upgraded) -->
+<div class="card lab-section" id="lab-attention">
+  <h2>👀 Lab 5 — Attention Visualizer <span class="pill ok">live</span></h2>
+  <p class="hint">Self-attention computes a query-key dot product for every token pair, then softmax-normalises. This is how "it" knows which word it refers to — the foundation of all LLMs.</p>
+  <span class="app-badge google">Google Translate</span><span class="app-badge chatgpt">ChatGPT</span><span class="app-badge">📧 Gmail Smart Reply</span>
+  <p class="interact-hint">👆 Click an ending — watch attention weights shift across the sentence</p>
+  <label>Sentence: <em>"the animal didn't cross the street because it was too …"</em></label>
+  <div style="margin-top:6px;">
+    <button id="attTired">…TIRED 🐫</button>
+    <button id="attWide">…WIDE 🛣️</button>
+    <button id="attHungry" class="ghost">…HUNGRY 🍕</button>
+  </div>
+  <div class="stat" id="attOut">click an ending ↑</div>
+  <canvas id="attCanvas" height="160"></canvas>
+  <div class="challenge"><b>🎯 Challenge:</b> TIRED → "it" attends to "animal" 60%+. WIDE → flips to "street" 55%+. HUNGRY → attention splits. Same sentence, different meaning resolved by context alone.</div>
+</div>
+
+<!-- LAB 6: MULTI-HEAD ATTENTION (NEW) -->
+<div class="card lab-section" id="lab-multihead">
+  <h2>🔀 Lab 6 — Multi-Head Attention <span class="pill new">new</span></h2>
+  <p class="hint">GPT-4 uses 96 attention heads. Each head learns a different relationship type — syntax, coreference, positional. Click a head to see what it focuses on.</p>
+  <p class="interact-hint">👆 Click a head card to inspect it</p>
+  <div class="grid2" id="multiHeadGrid" style="gap:6px;margin-top:8px;"></div>
+  <div class="stat" id="mhOut" style="margin-top:10px;">Click a head above to inspect it</div>
+  <div class="insight"><b>Why multiple heads?</b> One head tracks "subject→verb"; another "pronoun→antecedent"; another positional proximity. Combining all heads gives richer understanding than any single head alone.</div>
+</div>
+
+<!-- SECTION: TEMPERATURE -->
+<div class="section-header lab-section" id="sec-temperature"><h3>🌡️ Sampling · Lab 7</h3></div>
+
+<!-- LAB 7: TEMPERATURE + TOP-K + TOP-P (upgraded) -->
+<div class="card full lab-section" id="lab-temperature">
+  <h2>🌡️ Lab 7 — Temperature, Top-K &amp; Top-P Explorer <span class="pill ok">live</span></h2>
+  <p class="hint">ChatGPT's creativity dial, fully exposed. Temperature scales logits before softmax. Top-K and Top-P (nucleus sampling) are additional tricks used in every production LLM.</p>
+  <div class="grid3">
+    <div>
+      <span class="app-badge chatgpt">ChatGPT creativity</span><span class="app-badge">🎨 DALL-E variety</span><span class="app-badge spotify">Discover Weekly</span>
+      <label>Temperature <span class="val" id="tempV">1.00</span> <span style="color:var(--dim);font-size:11px">(0.1=laser · 3.0=chaos)</span></label>
+      <input type="range" id="tempSlider" min="0.1" max="3" step="0.05" value="1" title="Temperature">
+      <label>Top-K <span class="val" id="topkV">off</span> <span style="color:var(--dim);font-size:11px">(0=disabled)</span></label>
+      <input type="range" id="topkSlider" min="0" max="10" step="1" value="0" title="Top-K">
+      <label>Top-P (nucleus) <span class="val" id="toppV">1.00</span></label>
+      <input type="range" id="toppSlider" min="0.1" max="1.0" step="0.05" value="1.0" title="Top-P">
+      <div class="insight" style="margin-top:10px;"><b>Greedy = T→0.</b> Random = T→∞. Production ChatGPT uses T≈0.7 + Top-P≈0.9 to balance coherence and creativity.</div>
+    </div>
+    <div style="grid-column:span 2">
+      <div class="stat" id="tempOut"></div>
+      <canvas id="tempCanvas" height="140"></canvas>
+      <div class="stat" id="tempSample" style="margin-top:6px;"></div>
+    </div>
+  </div>
+  <div class="challenge"><b>🎯 Challenge:</b> T=0.1 → always picks "mat". T=2.0 → occasionally picks "moon". Set Top-K=2 → only top 2 words allowed. Set Top-P=0.7 → nucleus sampling. Real GPT-4 uses Top-P=0.9 by default.</div>
+</div>
+
+<!-- SECTION: BACKPROP -->
+<div class="section-header lab-section" id="sec-backprop"><h3>🔄 Backpropagation · Lab 8</h3></div>
+
+<!-- LAB 8: BACKPROP STEP-BY-STEP (NEW) -->
+<div class="card full lab-section" id="lab-backprop">
+  <h2>🔄 Lab 8 — Backpropagation Step-by-Step <span class="pill new">new</span></h2>
+  <p class="hint">Backprop is just the chain rule applied backwards through a computation graph. Watch gradients flow from the loss back to every weight — this is literally how GPT learns.</p>
+  <div class="grid2">
+    <div>
+      <span class="app-badge chatgpt">GPT training</span><span class="app-badge">🧬 AlphaFold</span>
+      <p class="interact-hint">👆 Press Forward pass then Backward pass — watch gradients propagate</p>
+      <label>Input x <span class="val" id="bpXV">2.0</span></label>
+      <input type="range" id="bpX" min="-3" max="3" step="0.1" value="2.0" title="Input x">
+      <label>Weight w <span class="val" id="bpWV">0.5</span></label>
+      <input type="range" id="bpW" min="-2" max="2" step="0.1" value="0.5" title="Weight w">
+      <div style="margin-top:8px;">
+        <button id="bpForward">▶ Forward pass</button>
+        <button id="bpBackward" class="purple-btn">◀ Backward pass</button>
+        <button class="ghost" id="bpReset">↺ Reset</button>
+      </div>
+      <div class="stat" id="bpOut">Press Forward pass to begin</div>
+    </div>
+    <div>
+      <canvas id="bpCanvas" height="280"></canvas>
+      <div class="insight" style="margin-top:10px;"><b>Chain rule:</b> ∂Loss/∂w = (∂Loss/∂output) × (∂output/∂w). Every layer multiplies its local gradient by the incoming gradient. Gradients can vanish (too small) or explode (too large) in deep networks — why residual connections and LayerNorm exist.</div>
+    </div>
+  </div>
+  <div class="challenge"><b>🎯 Challenge:</b> Set x=3, w=2 → large gradient on w. Set x=0 → gradient of w = 0 (dead weight!). This is the "dying ReLU" problem — why initialization matters enormously.</div>
+</div>
+
+<!-- SECTION: EMBEDDINGS -->
+<div class="section-header lab-section" id="sec-embeddings"><h3>🗺️ Vector Embeddings · Lab 9</h3></div>
+
+<!-- LAB 9: EMBEDDINGS (NEW) -->
+<div class="card full lab-section" id="lab-embeddings">
+  <h2>🗺️ Lab 9 — Vector Embeddings &amp; Similarity <span class="pill new">new</span></h2>
+  <p class="hint">Words are points in high-dimensional space. "king" − "man" + "woman" ≈ "queen". Spotify finds songs near you. Google finds documents near your query. All via dot products.</p>
+  <div class="grid2">
+    <div>
+      <span class="app-badge spotify">Spotify recs</span><span class="app-badge google">Google Search</span><span class="app-badge amazon">Amazon recs</span>
+      <p class="interact-hint">👆 Select two words to compute cosine similarity</p>
+      <label>Word A</label>
+      <select id="embedWordA" title="Word A">
+        <option>king</option><option>queen</option><option>man</option><option>woman</option>
+        <option>cat</option><option>dog</option><option>paris</option><option>france</option>
+        <option>london</option><option>england</option>
+      </select>
+      <label>Word B</label>
+      <select id="embedWordB" title="Word B">
+        <option>queen</option><option>king</option><option>woman</option><option>man</option>
+        <option>dog</option><option>cat</option><option>london</option><option>england</option>
+        <option>paris</option><option>france</option>
+      </select>
+      <button id="embedCompute">Compute Similarity</button>
+      <button id="embedAnalogy" class="warn-btn">king − man + woman = ?</button>
+      <div class="stat" id="embedOut">Select two words and click Compute</div>
+    </div>
+    <div>
+      <canvas id="embedCanvas" height="300" style="cursor:crosshair;border-radius:8px;margin-top:0;"></canvas>
+      <div class="insight" style="margin-top:8px;"><b>Cosine similarity</b> measures the angle between vectors, not distance. GPT-4 uses 12,288-dimensional embeddings — we visualise a 2D projection here.</div>
+    </div>
+  </div>
+  <div class="challenge"><b>🎯 Challenge:</b> king vs queen → high similarity (~0.97). cat vs france → low (~0.2). Try the analogy: king − man + woman. Result should be nearest to "queen" — this is why word2vec was revolutionary in 2013.</div>
+</div>
+
+<!-- SECTION: TRANSFORMER -->
+<div class="section-header lab-section" id="sec-transformer"><h3>🔮 Transformer Architecture · Lab 10</h3></div>
+
+<!-- LAB 10: TRANSFORMER WALK-THROUGH (NEW) -->
+<div class="card full lab-section" id="lab-transformer">
+  <h2>🔮 Lab 10 — Transformer Architecture Walk-Through <span class="pill new">new</span></h2>
+  <p class="hint">Step through a full transformer forward pass. Exactly how GPT-4 processes your message — Embedding → Positional Encoding → Multi-Head Attention → FFN → Softmax → next token.</p>
+  <div class="grid2">
+    <div>
+      <span class="app-badge chatgpt">ChatGPT</span><span class="app-badge google">Google Translate</span><span class="app-badge">🎙️ Whisper</span>
+      <p class="interact-hint">👆 Step through each transformer layer — watch activations flow</p>
+      <label>Input sentence</label>
+      <input type="text" id="tfInput" value="the cat sat" title="Transformer input">
+      <div style="margin-top:8px;">
+        <button id="tfStep">▶ Next Layer</button>
+        <button class="ghost" id="tfReset">↺ Reset</button>
+        <button id="tfAuto">▶▶ Run All</button>
+      </div>
+      <div class="stat" id="tfOut">Press Next Layer to walk through the transformer</div>
+    </div>
+    <div>
+      <canvas id="tfCanvas" height="320" style="border-radius:8px;margin-top:0;"></canvas>
+    </div>
+  </div>
+  <div class="insight"><b>Architecture:</b> Input tokens → Embedding (d=64) → Positional Encoding → × N layers (Attention + Add&amp;Norm + FFN + Add&amp;Norm) → Linear → Softmax → next token probabilities. GPT-4 has 96 layers, 96 heads, d=12288.</div>
+  <div class="challenge"><b>🎯 Challenge:</b> After embedding, each word is a 64-dim vector. After attention, it contains context. After FFN, it has "knowledge" about grammar and facts. After softmax, it's a probability distribution. Step through all layers to see this unfold.</div>
+</div>
+
+<!-- SECTION: MATMUL + O(n²) -->
+<div class="section-header lab-section" id="sec-matmul"><h3>⚙️ MatMul &amp; Complexity · Labs 11–12</h3></div>
+
+<!-- LAB 11: MATMUL (upgraded with canvas) -->
+<div class="card lab-section" id="lab-matmul">
+  <h2>🧮 Lab 11 — MatMul Visualizer <span class="pill ok">live</span></h2>
+  <p class="hint">C[i][j] += A[i][k] · B[k][j]. Every GPU, every neural net, every attention head runs this triple loop — billions of these sit behind every ChatGPT reply.</p>
+  <label>A = <em>[[1,2,3],[4,5,6],[7,8,9]]</em> &nbsp; B = <em>[[9,8,7],[6,5,4],[3,2,1]]</em></label>
+  <div><button id="mmStep">▶ step</button><button class="ghost" id="mmReset">↺ reset</button><button id="mmAuto">▶▶ auto</button></div>
+  <canvas id="mmCanvas" height="200"></canvas>
+  <div class="stat" id="mmOut">step through the loop ↑</div>
+  <div class="insight"><b>GPU parallelism:</b> CPUs do 1 cell at a time (this demo). A GPU does all n² cells simultaneously using CUDA cores — that's why training on GPU is 1000× faster.</div>
+</div>
+
+<!-- LAB 12: CONTEXT COST O(n²) (upgraded with canvas chart) -->
+<div class="card lab-section" id="lab-context">
+  <h2>📈 Lab 12 — Context Cost: Attention is O(n²) <span class="pill ok">live</span></h2>
+  <p class="hint">Every token scores every other token. Double the context = 4× the compute. This is the fundamental reason Flash Attention, KV caches, and sliding-window attention exist.</p>
+  <span class="app-badge chatgpt">ChatGPT long chats</span><span class="app-badge">📄 Claude 200K</span><span class="app-badge">⚡ Flash Attention</span>
+  <label>Context length: <span class="val" id="ctxV">1,024</span> tokens</label>
+  <input type="range" id="ctxSlider" min="128" max="131072" step="128" value="1024" title="Context length">
+  <canvas id="ctxCanvas" height="140"></canvas>
+  <div class="stat" id="ctxOut"></div>
+  <div class="insight"><b>Why it matters:</b> 32K context (GPT-4) = 1B attention scores per layer. 128K context (Claude) = 16B scores. Flash Attention reorganises the computation into tiled blocks that fit in GPU SRAM, bypassing memory bandwidth bottlenecks.</div>
+</div>
+
+<!-- REAL-WORLD MAP -->
+<div class="card full lab-section" id="sec-realworld">
+  <h2>🌍 Where You Just Used These Ideas</h2>
+  <p class="hint">Every card = a product you use daily, the exact lab that powers it, and the math behind it.</p>
+  <div class="grid3">
+    <div class="sc"><b>📧 Gmail Spam Filter</b>Single neuron + hinge loss: "free money", links → spam score. Gmail's first line of defence is exactly Labs 1+2.<div class="where">→ Labs 1&amp;2</div></div>
+    <div class="sc"><b>🏠 Zillow Price Estimate</b>MSE regression: size/location → price. Gradient descent finds optimal coefficients on millions of homes.<div class="where">→ Lab 3 (gradient descent)</div></div>
+    <div class="sc"><b>💬 ChatGPT Billing</b>You pay per TOKEN. BPE decides how many tokens your message contains — emoji costs 4 tokens each.<div class="where">→ Lab 4 (BPE tokenizer)</div></div>
+    <div class="sc"><b>👁️ How ChatGPT Knows Who "it" Is</b>Self-attention links pronouns to antecedents — the core mechanic behind translation &amp; summarisation.<div class="where">→ Labs 5&amp;6 (attention)</div></div>
+    <div class="sc"><b>🎨 The Temperature Knob</b>Every "creativity slider" in any chat UI is softmax temperature + top-p nucleus sampling.<div class="where">→ Lab 7 (temperature)</div></div>
+    <div class="sc"><b>🎵 Spotify Discover Weekly</b>Your listening history is an embedding vector. Nearest-neighbour search finds songs in the same cluster.<div class="where">→ Lab 9 (embeddings)</div></div>
+    <div class="sc"><b>🔄 GPT Training Loop</b>Forward pass → cross-entropy loss → backpropagation → gradient descent. Repeated ~1T times on 10,000 GPUs.<div class="where">→ Labs 2,3,8</div></div>
+    <div class="sc"><b>💸 Why Long Context Costs More</b>Attention is O(n²): 2× document = 4× compute. Flash Attention reorganises computation to fit in GPU SRAM.<div class="where">→ Lab 12 (O(n²))</div></div>
+    <div class="sc"><b>⚡ GPU = n³ Loops/Second</b>Every neural net, every attention head trains on the same triple matmul loop. Buying a datacenter = buying n³ ops/sec.<div class="where">→ Lab 11 (matmul)</div></div>
+  </div>
+</div>
+
+<!-- SECTION: QUIZ + SANDBOX -->
+<div class="section-header lab-section" id="sec-quiz"><h3>🎯 Quiz &amp; Sandbox</h3></div>
+
+<!-- QUIZ (15 questions) -->
+<div class="card full lab-section" style="background:linear-gradient(135deg,var(--card) 0%,var(--bg2) 100%);" id="lab-quiz">
+  <h2>🎯 Spot the AI — Interactive Quiz <span class="pill ok">live</span></h2>
+  <p class="hint">15 everyday apps — can you spot which use AI? Click each card to reveal the answer and the exact algorithm behind it. Earn XP for each reveal.</p>
+  <div class="app-grid" id="quizGrid" style="grid-template-columns:repeat(5,1fr);"></div>
+  <div class="stat" id="quizScore" style="margin-top:12px;">Score: 0/15 — click each card to reveal</div>
+  <button id="quizReset" style="margin-top:8px;">↺ Restart Quiz</button>
+</div>
+
+<!-- FREE-PLAY SANDBOX -->
+<div class="card full lab-section" id="lab-sandbox">
+  <h2>🧪 Free-Play Sandbox <span class="pill ok">live</span></h2>
+  <p class="hint">Mix and match! Type any text and pick an AI pipeline — see step-by-step exactly how the system processes it using the algorithms from Labs 1–12.</p>
+  <div class="grid3">
+    <div>
+      <label>Your sentence</label>
+      <input type="text" id="sandboxInput" value="I love this movie!" oninput="runSandbox()" title="Sandbox input">
+      <label style="margin-top:8px;">Pick an AI pipeline</label>
+      <select id="sandboxApp" onchange="runSandbox()" title="Select AI app">
+        <option value="sentiment">📊 Sentiment Analysis (Netflix)</option>
+        <option value="translate">🌐 Translation (Google Translate)</option>
+        <option value="recommend">🎵 Recommendation (Spotify)</option>
+        <option value="search">🔍 Semantic Search (Google)</option>
+        <option value="voice">🗣️ Voice Assistant (Siri)</option>
+        <option value="spam">📧 Spam Filter (Gmail)</option>
+      </select>
+      <button onclick="runSandbox()" style="margin-top:10px;">▶ Run Pipeline</button>
+    </div>
+    <div style="grid-column:span 2">
+      <label>Full pipeline trace</label>
+      <div class="stat" id="sandboxOut" style="min-height:150px;">Type a sentence to see the AI pipeline...</div>
+    </div>
+  </div>
+</div>
 
 </main>
-    <script>
-        /* ═══════════ micrograd, ported to JS (same 4 backward rules) ═══════════ */
-        class V {
-            constructor(data, children = []) { this.data = data; this.grad = 0; this.children = children; this.back = () => { }; }
-            static w(x) { return x instanceof V ? x : new V(x); }
-            add(o) {
-                o = V.w(o); const out = new V(this.data + o.data, [this, o]);
-                out.back = () => { this.grad += out.grad; o.grad += out.grad }; return out;
-            }
-            mul(o) {
-                o = V.w(o); const out = new V(this.data * o.data, [this, o]);
-                out.back = () => { this.grad += out.grad * o.data; o.grad += out.grad * this.data }; return out;
-            }
-            pow(n) {
-                const out = new V(Math.pow(this.data, n), [this]);
-                out.back = () => { this.grad += out.grad * n * Math.pow(this.data, n - 1) }; return out;
-            }
-            tanh() {
-                const t = Math.tanh(this.data); const out = new V(t, [this]);
-                out.back = () => { this.grad += out.grad * (1 - t * t) }; return out;
-            }
-            relu() {
-                const out = new V(Math.max(0, this.data), [this]);
-                out.back = () => { this.grad += out.grad * (this.data > 0 ? 1 : 0) }; return out;
-            }
-            neg() { return this.mul(-1); } sub(o) { return this.add(o.neg()); }
-            backward() {
-                const topo = [], seen = new Set();
-                const visit = n => { if (!seen.has(n)) { seen.add(n); n.children.forEach(visit); topo.push(n); } };
-                visit(this); this.grad = 1;
-                for (let i = topo.length - 1; i >= 0; i--) topo[i].back();
-            }
-        }
-        class Neuron {
-            constructor(nin, act = 'tanh') {
-                this.w = []; for (let i = 0; i < nin; i++)this.w.push(new V(Math.random() * 2 - 1));
-                this.b = new V(0); this.act = act;
-            }
-            call(x) {
-                let d = new V(0); this.w.forEach((wi, i) => d = d.mul(1).add(wi.mul(x[i]))); d = d.add(this.b);
-                return this.act === 'tanh' ? d.tanh() : this.act === 'relu' ? d.relu() : d;
-            }
-            params() { return [...this.w, this.b]; }
-        }
-        class Layer {
-            constructor(nin, n, act = 'tanh') { this.neurons = []; for (let i = 0; i < n; i++)this.neurons.push(new Neuron(nin, act)); }
-            call(x) { const out = this.neurons.map(n => n.call(x)); return out.length === 1 ? out[0] : out; }
-            params() { return this.neurons.flatMap(n => n.params()); }
-        }
-        class MLP {
-            constructor(nin, sizes) {
-                const all = [nin, ...sizes]; this.layers = [];
-                sizes.forEach((s, i) => this.layers.push(new Layer(all[i], s, i === sizes.length - 1 ? 'linear' : 'tanh')));
-            }
-            call(x) { this.layers.forEach(l => x = l.call(x)); return x; }
-            params() { return this.layers.flatMap(l => l.params()); }
-            zeroGrad() { this.params().forEach(p => p.grad = 0); }
-        }
 
-        /* ═══════════ SCENARIO 1: umbrella (frozen weights) ═══════════ */
-        const UW = [2.0, -0.5, 1.0], UB = -0.3;
-        function umb(x1, x2, x3) { return Math.tanh(x1 * UW[0] + x2 * UW[1] + x3 * UW[2] + UB); }
-        function renderUmbrella() {
-            const x1 = +x1s.value, x2 = +x2s.value, x3 = +x3s.value;
-            v1.textContent = x1; v2.textContent = x2; v3.textContent = x3;
-            const o = umb(x1, x2, x3), pct = (o + 1) / 2 * 100;
-            gauge.style.width = pct + '%';
-            gauge.style.background = o > 0.3 ? 'var(--ok)' : o < -0.3 ? 'var(--bad)' : 'var(--warn)';
-            const verdict = o > 0.3 ? '☂ BRING THE UMBRELLA' : o < -0.3 ? '😎 leave it home' : '🤔 borderline… your call';
-            umbOut.textContent = `tanh(${(x1 * UW[0] + x2 * UW[1] + x3 * UW[2] + UB).toFixed(2)}) = ${o.toFixed(3)}   →   ${verdict}`;
-        }
-        ['x1', 'x2', 'x3'].forEach(id => { const el = document.getElementById(id); el.id = el.id; el.oninput = renderUmbrella; });
-        const x1s = document.getElementById('x1'), x2s = document.getElementById('x2'), x3s = document.getElementById('x3');
-        renderUmbrella();
-
-        /* ═══════════ SCENARIO 2: train live ═══════════ */
-        const X = [[2, 3, -1], [3, -1, .5], [.5, 1, 1], [1, 1, -1], [0, 0, 0]].map(r => r.map(v => v / 3)); // normalized
-        const Y = [1, -1, 1, -1, 1];
-        let model, step = 0; const losses = [];
-        function hinge(model) {
-            const preds = X.map(x => model.call(x));
-            let loss = preds[0].mul(0);
-            preds.forEach((p, i) => { loss = loss.add(new V(1).sub(new V(Y[i]).mul(p)).relu()); });
-            loss = loss.mul(1 / X.length);
-            let l2 = new V(0); model.params().forEach(p => l2 = l2.add(p.mul(p)));
-            return { loss: loss.add(l2.mul(0.0001)), preds };
-        }
-        function freshModel() { model = new MLP(3, [4, 4, 1]); step = 0; losses.length = 0; }
-        function doSteps(n) {
-            const lr = +document.getElementById('lr').value;
-            for (let i = 0; i < n; i++) {
-                const { loss, preds } = hinge(model);
-                model.zeroGrad(); loss.backward();
-                model.params().forEach(p => p.data -= lr * p.grad);
-                step++; losses.push(loss.data);
-                if (i === n - 1) lastPreds = preds;
-            }
-            drawChart(); renderTrain();
-        }
-        let lastPreds = null;
-        function renderTrain() {
-            const { loss, preds } = hinge(model);
-            const acc = preds.filter((p, i) => (p.data > 0) === (Y[i] > 0)).length;
-            trainStat.textContent = `step ${step}   loss ${loss.data.toFixed(4)}   accuracy ${acc}/${Y.length}`;
-            let rows = '<tr><th>input (÷3)</th><th>prediction</th><th>want</th><th></th></tr>';
-            preds.forEach((p, i) => {
-                const ok = (p.data > 0) === (Y[i] > 0);
-                rows += `<tr><td>[${X[i].join(', ')}]</td><td>${p.data >= 0 ? '+' : ''}${p.data.toFixed(2)}</td><td>${Y[i] > 0 ? '+1' : '-1'}</td><td>${ok ? '✅' : '❌'}</td></tr>`;
-            });
-            predTable.innerHTML = rows;
-        }
-        function drawChart() {
-            const c = document.getElementById('chart'), ctx = c.getContext('2d');
-            ctx.clearRect(0, 0, c.width, c.height);
-            if (losses.length < 2) return;
-            const mx = Math.max(...losses, 1);
-            ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2; ctx.beginPath();
-            losses.forEach((l, i) => {
-                const x = i / (losses.length - 1) * (c.width - 16) + 8, y = c.height - 10 - (l / mx) * (c.height - 24);
-                i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
-            });
-            ctx.stroke();
-        }
-        document.getElementById('lr').oninput = e => lrV.textContent = (+e.target.value).toFixed(3);
-        document.getElementById('b1').onclick = () => doSteps(1);
-        document.getElementById('b10').onclick = () => doSteps(10);
-        document.getElementById('b100').onclick = () => doSteps(100);
-        document.getElementById('reset').onclick = () => { freshModel(); drawChart(); renderTrain(); };
-        freshModel(); renderTrain();
-
-        /* ═══════════ SCENARIO 3: BPE tokenizer, ported to JS ═══════════ */
-        /* ════════════ softmax + dot (for the attention labs) ════════════ */
-        function softmaxJS(scores, temperature = 1.0) {
-            const m = Math.max(...scores);
-            const exps = scores.map(s => Math.exp((s - m) / temperature));
-            const total = exps.reduce((a, b) => a + b, 0);
-            return exps.map(e => e / total);
-        }
-        function dotJS(a, b) { let s = 0; for (let i = 0; i < a.length; i++) s += a[i] * b[i]; return s; }
-
-        function countPairs(ids) {
-            const m = new Map();
-            for (let i = 0; i < ids.length - 1; i++) { const p = ids[i] + ',' + ids[i + 1]; m.set(p, (m.get(p) || 0) + 1); } return m;
-        }
-        function mergeIds(ids, pair, idx) {
-            const [a, b] = pair.split(',').map(Number); const out = []; let i = 0;
-            while (i < ids.length) { if (i < ids.length - 1 && ids[i] === a && ids[i + 1] === b) { out.push(idx); i += 2; } else { out.push(ids[i]); i++; } }
-            return out;
-        }
-        class BPE {
-            constructor() { this.merges = {}; this.vocab = {}; }
-            train(text, vocabSize) {
-                this.merges = {}; this.vocab = {};
-                for (let i = 0; i < 256; i++)this.vocab[i] = [i];
-                let ids = [...new TextEncoder().encode(text)];
-                const logLines = [];
-                for (let i = 0; i < vocabSize - 256; i++) {
-                    const stats = countPairs(ids); if (!stats.size) break;
-                    let best = null, bc = -1; for (const [p, c] of stats) if (c > bc) { bc = c; best = p; }
-                    const idx = 256 + i; ids = mergeIds(ids, best, idx);
-                    const [a, b] = best.split(',').map(Number);
-                    this.merges[best] = idx; this.vocab[idx] = [...this.vocab[a], ...this.vocab[b]];
-                    if (logLines.length < 6) logLines.push(`merge ${i + 1}: (${a},${b})→${idx}  "${String.fromCharCode(...this.vocab[idx]).replace(/\n/g, '⏎')}"  (${bc}x)`);
-                }
-                this.log = logLines.join('\n') || 'no merges learned';
-                return ids;
-            }
-            encode(text) {
-                let ids = [...new TextEncoder().encode(text)];
-                while (ids.length >= 2) {
-                    const stats = countPairs(ids);
-                    let best = null, rank = Infinity;
-                    for (const p of stats.keys()) { const r = this.merges[p] ?? Infinity; if (r < rank) { rank = r; best = p; } }
-                    if (best === null || !(best in this.merges)) break;
-                    ids = mergeIds(ids, best, this.merges[best]);
-                }
-                return ids;
-            }
-            decode(ids) {
-                let bytes = []; ids.forEach(i => bytes.push(...(this.vocab[i] || [i])));
-                return new TextDecoder('utf-8').decode(new Uint8Array(bytes));
-            }
-        }
-        const tok = new BPE();
-        function trainTok() {
-            tok.train(document.getElementById('corpus').value, +document.getElementById('vs').value);
-            mergeLog.textContent = tok.log;
-            renderTokens();
-        }
-        function renderTokens() {
-            const t = document.getElementById('testText').value;
-            const untrained = !tok.vocab[256];
-            const ids = tok.encode(t);
-            chips.innerHTML = '';
-            ids.forEach(i => {
-                const s = document.createElement('span');
-                s.className = 'chip';
-                s.title = 'id ' + i;
-                s.style.background = `hsl(${(i * 47) % 360},80%,70%)`;
-                s.textContent = (tok.vocab[i] ? String.fromCharCode(...tok.vocab[i]) : '?').replace(/ /g, '␣');
-                chips.appendChild(s);
-            });
-            const bytes = t.length ? new TextEncoder().encode(t).length : 0;
-            const round = tok.decode(ids) === t;
-            const cost = ids.length * 0.15 / 1e6;            // $0.15 per 1M tokens (GPT-4o-mini input rate)
-            tokStat.textContent = (untrained ? '(untrained → raw-byte mode) ' : '') +
-                `chars ${t.length} · bytes ${bytes} · tokens ${ids.length}` +
-                (bytes ? ` · compression ${(bytes / ids.length).toFixed(2)}× · roundtrip ${round ? '✅ exact' : '❌ BROKEN'}` : '');
-            costStat.textContent = `💰 API cost check (GPT-4o-mini input ≈ $0.15 / 1M tokens):
-this message = ${ids.length} tokens ≈ $${cost.toFixed(8)}
-that's ≈ ${Math.ceil(1e6 / Math.max(ids.length, 1)).toLocaleString()} messages like this per $1.00`;
-        }
-        document.getElementById('trainTok').onclick = trainTok;
-        document.getElementById('vs').oninput = e => vsV.textContent = e.target.value;
-        renderTokens();
-
-        /* ══════════ SCENARIO 4: ATTENTION VISUALIZER ══════════ */
-        function renderAttention(kind) {
-            const t = kind === 'wide';
-            const e_it = t ? [0, 0, 0.8, 0.5] : [0.7, 0, 0, 0.8];
-            const embs = [[0.0, 0, 0, 0], [0.9, 0, 0, 0.2], [0.1, 0.8, 0, 0], [0.2, 0.9, 0.3, 0],
-            [0.0, 0, 0, 0], [0, 0, 0.9, 0], [0, 0.4, 0, 0], e_it];
-            const NAMES = ['the', 'animal', "didn't", 'cross', 'the', 'street', 'because', 'it'];
-            const scores = embs.map(e => e_it.reduce((s, q, i) => s + q * e[i], 0) / 2);
-            const m = Math.max(...scores);
-            const ex = scores.map(s => Math.exp((s - m)));
-            const sum = ex.reduce((a, b) => a + b, 0);
-            const w = ex.map(e => e / sum);
-            const idx = [1, 5]; // 'animal' vs 'street'
-            const maxI = idx[w[idx[0]] > w[idx[1]] ? 0 : 1];
-            const winner = t ? 'street 🛣️' : 'animal 🐫';
-            let out = `sentence: the animal didn't cross the street because **it** was too ${t ? 'WIDE' : 'TIRED'}\n\n`;
-            for (let j = 0; j < embs.length; j++) {
-                const pct = w[j] * 100;
-                const block = '█'.repeat(Math.round(pct / 4));
-                out += `${NAMES[j].padEnd(8)} ${block.padEnd(25, '·')} ${pct.toFixed(1)}%${j === maxI ? '  ← "it" = this' : ''}\n`;
-            }
-            out += `\n→ softmax says "it" = ${winner} (${(w[maxI] * 100).toFixed(1)}% of its attention)`;
-            attOut.textContent = out;
-        }
-        document.getElementById('attTired').onclick = () => renderAttention('tired');
-        document.getElementById('attWide').onclick = () => renderAttention('wide');
-        renderAttention('tired');
-
-        /* ══════════ SCENARIO 5: TEMPERATURE EXPLORER ══════════ */
-        const TPROBS = [0.62, 0.24, 0.09, 0.05];
-        const TWORDS = ['mat', 'floor', 'roof', 'moon'];
-        const TLOGITS = TPROBS.map(p => Math.log(p));
-        function renderTemp() {
-            const T = +tempSlider.value;
-            tempV.textContent = T.toFixed(2);
-            const m = Math.max(...TLOGITS);
-            const ex = TLOGITS.map(l => Math.exp((l - m) / T));
-            const sum = ex.reduce((a, b) => a + b, 0);
-            const dist = ex.map(e => e / sum);
-            let bars = '';
-            dist.forEach((p, i) => {
-                const block = '█'.repeat(Math.round(p * 40));
-                bars += `${TWORDS[i].padEnd(6)} ${block.padEnd(42, '·')} ${(p * 100).toFixed(2)}%\n`;
-            });
-            tempOut.textContent = `next-word distribution after "The cat sat on the ___"\n\n${bars}`;
-            const picks = [];
-            for (let i = 0; i < 10; i++) {
-                let r = Math.random(), acc = 0, pick = TWORDS[TWORDS.length - 1];
-                for (let j = 0; j < dist.length; j++) { acc += dist[j]; if (r < acc) { pick = TWORDS[j]; break; } }
-                picks.push(pick);
-            }
-            tempSample.textContent = `🎲 10 samples from this distribution:\n${picks.join(' ')}`;
-        }
-        tempSlider.oninput = renderTemp;
-        renderTemp();
-
-        /* ══════════ SCENARIO 6: CONTEXT COST O(n²) ══════════ */
-        function renderCtx() {
-            const n = +ctxSlider.value;
-            ctxV.textContent = n.toLocaleString();
-            const scores = n * n;
-            const kb = scores * 4 / 1024;
-            ctxOut.textContent =
-                `${n.toLocaleString()} tokens × ${n.toLocaleString()} tokens = ${scores.toLocaleString()} pairwise scores\n` +
-                `score matrix = ${kb < 1024 ? kb.toFixed(0) + ' KB' : (kb / 1024).toFixed(1) + ' MB'} ` +
-                `(4 bytes per score)\n` +
-                `at $0.15/1M tokens ≈ $${(n * 0.15 / 1e6).toFixed(6)} just to READ this context\n` +
-                `double the context → 4× the attention compute. That's O(n²).`;
-        }
-        ctxSlider.oninput = renderCtx;
-        renderCtx();
-        /* ══════════ SCENARIO 7: matmul visualizer ══════════ */
-        const MMA = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
-        const MMB = [[9, 8, 7], [6, 5, 4], [3, 2, 1]];
-        let mm_i = 0, mm_j = 0, mm_k = 0, mm_sum = 0;
-        function renderMM() {
-            let out = 'A (row ▶)              B (col ▶)             C so far\n';
-            for (let r = 0; r < 3; r++) {
-                let a = MMA[r].map((v, c) => (r === mm_i && c === mm_k) ? `[${v}]` : ` ${v} `).join('');
-                let b = MMB.map(row => row[mm_j]).map(v => ` ${v} `).join('');
-                let cRow = (r === mm_i && mm_j < 3) ? ' · ' : ' · ';
-                if (r === mm_i && mm_j < 3) cRow = String(mm_sum).padStart(3, ' ');
-                out += (r === mm_i ? '▶' : ' ') + a + '   ' + (r === mm_j ? '▶' : ' ') + b + '   ' + cRow + '\n';
-            }
-            out += `\nC[${mm_i}][${mm_j}] += A[${mm_i}][${mm_k}] · B[${mm_k}][${mm_j}] = ${MMA[mm_i][mm_k]}·${MMB[mm_k][mm_j]}   →   running total ${mm_sum}`;
-            if (mm_i === 2 && mm_j === 2 && mm_k === 0) out += '\n✅ C[2][2] done — C contains all 9 cells.';
-            mmOut.textContent = out;
-        }
-        function mmStep() {
-            if (mm_i === 2 && mm_j === 2 && mm_k === 0) return;   // done
-            mm_sum += MMA[mm_i][mm_k] * MMB[mm_k][mm_j];
-            if (mm_k < 2) { mm_k++; }
-            else {
-                mm_k = 0;
-                if (mm_j < 2) { mm_j++; mm_sum = 0; }
-                else { mm_j = 0; if (mm_i < 2) { mm_i++; mm_sum = 0; } }
-            }
-            renderMM();
-        }
-        function mmReset() { mm_i = 0; mm_j = 0; mm_k = 0; mm_sum = 0; renderMM(); }
-        document.getElementById('mmStep').onclick = mmStep;
-        document.getElementById('mmReset').onclick = mmReset;
-        renderMM();
-
-
-        /* ═══ YOUR TURN: Custom weights for Umbrella ═══ */
-        function updateCustomW() {
-            const parts = document.getElementById('customW').value.split(',').map(Number);
-            if (parts.length === 3 && parts.every(n => !isNaN(n))) {
-                window.customW = parts;
-                renderUmbrella();
-                document.getElementById('customWout').textContent = ' ✓ weights updated';
-            }
-        }
-
-        /* ═══ YOUR TURN: Your own message cost ═══ */
-        function renderYourCost() {
-            const msg = document.getElementById('yourMsg').value;
-            const ids = window.tok ? window.tok.encode(msg) : [];
-            const cost = ids.length * 0.15 / 1e6;
-            document.getElementById('yourCostOut').textContent =
-                `${msg.length} chars → ${ids.length} tokens → $${cost.toFixed(8)} per message`;
-        }
-
-    </script>
-
+<footer>
+  <div style="color:var(--dim2);font-size:13px;margin-bottom:10px;">Built with ❤️ by <a href="https://www.linkedin.com/in/satyarao" target="_blank" rel="noopener">Satya</a> · All AI runs locally in your browser · No libraries used</div>
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+    <a href="https://satyabhan007.github.io" target="_blank" rel="noopener">🌐 satyabhan007.github.io</a>
+    <a href="https://github.com/satyabhan007/AI-ML" target="_blank" rel="noopener">💻 GitHub</a>
+    <a href="https://www.linkedin.com/in/satyarao" target="_blank" rel="noopener">💼 LinkedIn</a>
+  </div>
+</footer>
 <script>
-    /* ══════════ SPOT THE AI QUIZ ══════════ */
-    const QUIZ = [
-        { app: "📧 Gmail spam filter", usesAI: true, reason: "ML classifier trained on billions of emails" },
-        { app: "🎵 Spotify Discover Weekly", usesAI: true, reason: "Collaborative filtering + NLP on music blogs" },
-        { app: "📸 Face ID on iPhone", usesAI: true, reason: "Neural network maps 30,000 IR dots on your face" },
-        { app: "🏠 Zillow home estimates", usesAI: true, reason: "Regression model on millions of home sales" },
-        { app: "🛒 Amazon recommendations", usesAI: true, reason: "Matrix factorization predicts what you'll buy" },
-        { app: "📺 Netflix thumbnails", usesAI: true, reason: "A/B testing + personalization picks the image" },
-        { app: "🧮 Calculator app", usesAI: false, reason: "Pure math — no learning. Not everything is AI!" },
-        { app: "🔒 Password manager", usesAI: false, reason: "Encryption + storage — no prediction involved" },
-        { app: "🗣️ Siri / Alexa", usesAI: true, reason: "Speech → NLU → response, all neural networks" },
-        { app: "📝 Notepad app", usesAI: false, reason: "Just text editing — doesn't learn from you" },
+/* ═══════════════════════════════════════════
+   XP SYSTEM
+═══════════════════════════════════════════ */
+let xp=0;
+const XP_MAX=1200;
+function addXP(n){
+  xp=Math.min(xp+n,XP_MAX);
+  document.getElementById('xpFill').style.width=(xp/XP_MAX*100)+'%';
+  document.getElementById('xpText').textContent=xp+' / '+XP_MAX;
+  document.querySelectorAll('.badge').forEach(b=>{ if(xp>=+b.dataset.xp) b.classList.add('earned'); });
+}
+
+/* ═══════════════════════════════════════════
+   LAZY LOAD — IntersectionObserver
+═══════════════════════════════════════════ */
+const labInits={};
+const labObserver=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      labObserver.unobserve(e.target);
+      const id=e.target.id;
+      if(labInits[id]){labInits[id]();delete labInits[id];}
+    }
+  });
+},{threshold:0.05,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.lab-section').forEach(el=>labObserver.observe(el));
+
+/* ═══════════════════════════════════════════
+   NAV TABS
+═══════════════════════════════════════════ */
+document.querySelectorAll('.nav-tab').forEach(tab=>{
+  tab.onclick=()=>{
+    document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const target=document.getElementById(tab.dataset.target);
+    if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+  };
+});
+
+/* ═══════════════════════════════════════════
+   micrograd — same 4 backward rules as Karpathy's micrograd
+═══════════════════════════════════════════ */
+class V{
+  constructor(data,children=[]){this.data=data;this.grad=0;this.children=children;this.back=()=>{};}
+  static w(x){return x instanceof V?x:new V(x);}
+  add(o){o=V.w(o);const out=new V(this.data+o.data,[this,o]);out.back=()=>{this.grad+=out.grad;o.grad+=out.grad;};return out;}
+  mul(o){o=V.w(o);const out=new V(this.data*o.data,[this,o]);out.back=()=>{this.grad+=out.grad*o.data;o.grad+=out.grad*this.data;};return out;}
+  pow(n){const out=new V(Math.pow(this.data,n),[this]);out.back=()=>{this.grad+=out.grad*n*Math.pow(this.data,n-1);};return out;}
+  tanh(){const t=Math.tanh(this.data);const out=new V(t,[this]);out.back=()=>{this.grad+=out.grad*(1-t*t);};return out;}
+  relu(){const out=new V(Math.max(0,this.data),[this]);out.back=()=>{this.grad+=out.grad*(this.data>0?1:0);};return out;}
+  neg(){return this.mul(-1);}sub(o){return this.add(V.w(o).neg());}
+  backward(){const topo=[],seen=new Set();const visit=n=>{if(!seen.has(n)){seen.add(n);n.children.forEach(visit);topo.push(n);}};visit(this);this.grad=1;for(let i=topo.length-1;i>=0;i--)topo[i].back();}
+}
+class Neuron{
+  constructor(nin,act='tanh'){this.w=[];for(let i=0;i<nin;i++)this.w.push(new V(Math.random()*2-1));this.b=new V(0);this.act=act;}
+  call(x){let d=new V(0);this.w.forEach((wi,i)=>d=d.add(wi.mul(x[i])));d=d.add(this.b);return this.act==='tanh'?d.tanh():this.act==='relu'?d.relu():d;}
+  params(){return[...this.w,this.b];}
+}
+class Layer{
+  constructor(nin,n,act='tanh'){this.neurons=[];for(let i=0;i<n;i++)this.neurons.push(new Neuron(nin,act));}
+  call(x){const out=this.neurons.map(n=>n.call(x));return out.length===1?out[0]:out;}
+  params(){return this.neurons.flatMap(n=>n.params());}
+}
+class MLP{
+  constructor(nin,sizes){const all=[nin,...sizes];this.layers=[];sizes.forEach((s,i)=>this.layers.push(new Layer(all[i],s,i===sizes.length-1?'linear':'tanh')));}
+  call(x){this.layers.forEach(l=>x=l.call(x));return x;}
+  params(){return this.layers.flatMap(l=>l.params());}
+  zeroGrad(){this.params().forEach(p=>p.grad=0);}
+}
+function softmaxJS(scores,T=1.0){const m=Math.max(...scores);const ex=scores.map(s=>Math.exp((s-m)/T));const tot=ex.reduce((a,b)=>a+b,0);return ex.map(e=>e/tot);}
+function dot(a,b){return a.reduce((s,v,i)=>s+v*b[i],0);}
+
+/* ═══════════════════════════════════════════
+   LAB 1: UMBRELLA NEURON
+═══════════════════════════════════════════ */
+(function(){
+  let UW=[2.0,-0.5,1.0],UB=-0.3;
+  function renderUmbrella(){
+    const x1=+document.getElementById('x1').value;
+    const x2=+document.getElementById('x2').value;
+    const x3=+document.getElementById('x3').value;
+    document.getElementById('v1').textContent=x1.toFixed(2);
+    document.getElementById('v2').textContent=x2.toFixed(2);
+    document.getElementById('v3').textContent=x3.toFixed(2);
+    const raw=x1*UW[0]+x2*UW[1]+x3*UW[2]+UB;
+    const o=Math.tanh(raw);
+    const pct=(o+1)/2*100;
+    const g=document.getElementById('gauge');
+    g.style.width=pct+'%';
+    g.style.background=o>0.3?'var(--ok)':o<-0.3?'var(--bad)':'var(--warn)';
+    const verdict=o>0.3?'☂️ BRING THE UMBRELLA':o<-0.3?'😎 leave it home':'🤔 borderline… your call';
+    document.getElementById('umbOut').textContent=
+      `z = ${UW[0]}×${x1.toFixed(2)} + ${UW[1]}×${x2.toFixed(2)} + ${UW[2]}×${x3.toFixed(2)} + (${UB}) = ${raw.toFixed(4)}\ntanh(${raw.toFixed(4)}) = ${o.toFixed(4)}\n→ ${verdict}\n\nDecision boundary: z = 0 → tanh(0) = 0\nFind the cloudy value where z crosses 0!`;
+    addXP(1);
+  }
+  ['x1','x2','x3'].forEach(id=>document.getElementById(id).oninput=renderUmbrella);
+  document.getElementById('customW').oninput=()=>{
+    const parts=document.getElementById('customW').value.split(',').map(Number);
+    if(parts.length===3&&parts.every(n=>!isNaN(n))){UW=parts;document.getElementById('cwLabel').textContent=parts.join(', ');renderUmbrella();}
+  };
+  renderUmbrella();
+})();
+
+/* ═══════════════════════════════════════════
+   LAB 2: TRAIN LIVE
+═══════════════════════════════════════════ */
+(function(){
+  const X=[[2,3,-1],[3,-1,.5],[.5,1,1],[1,1,-1],[0,0,0]].map(r=>r.map(v=>v/3));
+  const Y=[1,-1,1,-1,1];
+  let model,step=0,losses=[];
+  function hinge(m){
+    const preds=X.map(x=>m.call(x));
+    let loss=preds[0].mul(0);
+    preds.forEach((p,i)=>{loss=loss.add(new V(1).sub(new V(Y[i]).mul(p)).relu());});
+    loss=loss.mul(1/X.length);
+    let l2=new V(0);m.params().forEach(p=>l2=l2.add(p.mul(p)));
+    return{loss:loss.add(l2.mul(0.0001)),preds};
+  }
+  function freshModel(){model=new MLP(3,[4,4,1]);step=0;losses=[];}
+  function doSteps(n){
+    const lr=+document.getElementById('lr').value;
+    for(let i=0;i<n;i++){
+      const{loss,preds}=hinge(model);
+      model.zeroGrad();loss.backward();
+      model.params().forEach(p=>p.data-=lr*p.grad);
+      step++;losses.push(loss.data);
+    }
+    drawChart();renderTrain();addXP(n>100?30:n>10?15:n>1?8:3);
+  }
+  function renderTrain(){
+    const{loss,preds}=hinge(model);
+    const acc=preds.filter((p,i)=>(p.data>0)===(Y[i]>0)).length;
+    document.getElementById('trainStat').textContent=`step ${step}   loss ${loss.data.toFixed(4)}   accuracy ${acc}/${Y.length}`;
+    let rows='<tr><th>input (÷3)</th><th>pred</th><th>want</th><th></th></tr>';
+    preds.forEach((p,i)=>{
+      const ok=(p.data>0)===(Y[i]>0);
+      rows+=`<tr><td>[${X[i].map(v=>v.toFixed(2)).join(', ')}]</td><td>${p.data>=0?'+':''}${p.data.toFixed(3)}</td><td>${Y[i]>0?'+1':'-1'}</td><td>${ok?'✅':'❌'}</td></tr>`;
+    });
+    document.getElementById('predTable').innerHTML=rows;
+  }
+  function drawChart(){
+    const c=document.getElementById('chart');c.width=c.offsetWidth;
+    const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
+    if(losses.length<2)return;
+    const mx=Math.max(...losses,0.01);
+    // grid
+    ctx.strokeStyle='rgba(30,48,80,0.6)';ctx.lineWidth=1;
+    [0.25,0.5,0.75].forEach(p=>{const y=p*(c.height-20)+10;ctx.beginPath();ctx.moveTo(8,y);ctx.lineTo(c.width-8,y);ctx.stroke();});
+    // loss curve
+    ctx.strokeStyle='#38bdf8';ctx.lineWidth=2.5;ctx.beginPath();
+    losses.forEach((l,i)=>{const x=i/(losses.length-1)*(c.width-16)+8,y=c.height-10-(l/mx)*(c.height-20);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+    ctx.stroke();
+  }
+  document.getElementById('lr').oninput=e=>document.getElementById('lrV').textContent=(+e.target.value).toFixed(3);
+  document.getElementById('b1').onclick=()=>doSteps(1);
+  document.getElementById('b10').onclick=()=>doSteps(10);
+  document.getElementById('b100').onclick=()=>doSteps(100);
+  document.getElementById('b1000').onclick=()=>doSteps(1000);
+  document.getElementById('reset').onclick=()=>{freshModel();drawChart();renderTrain();};
+  freshModel();renderTrain();
+  window.addEventListener('resize',drawChart);
+})();
+
+/* ═══════════════════════════════════════════
+   LAB 3: GRADIENT DESCENT VISUALIZER (NEW)
+═══════════════════════════════════════════ */
+labInits['lab-gradient']=(function(){
+  let init=false;
+  return function(){
+    if(init)return;init=true;
+    const canvas=document.getElementById('gdCanvas');
+    const lossC=document.getElementById('gdLossCanvas');
+    let ball={x:0.5},lossHistory=[],stepN=0,autoI=null;
+    const landscapes={
+      bowl:(x)=>({f:x*x*4,df:x*8}),
+      sincos:(x)=>({f:Math.sin(x*6)*0.5+Math.cos(x*3)*0.3+x*x*0.2,df:Math.cos(x*6)*3-Math.sin(x*3)*0.9+x*0.4}),
+      saddle:(x)=>({f:x*x*0.5-Math.sin(x*2)*0.8,df:x-Math.cos(x*2)*1.6}),
+      ravine:(x)=>({f:x*x*5+Math.sin(x*20)*0.05,df:x*10+Math.cos(x*20)}),
+    };
+    function getLand(){return landscapes[document.getElementById('gdLand').value];}
+    function drawLandscape(){
+      const ctx=canvas.getContext('2d');canvas.width=canvas.offsetWidth;
+      const W=canvas.width,H=canvas.height,land=getLand();
+      ctx.clearRect(0,0,W,H);
+      // Draw landscape curve
+      ctx.strokeStyle='#38bdf8';ctx.lineWidth=2.5;ctx.beginPath();
+      for(let px=0;px<W;px++){const x=(px/W)*2-1;const y=land.f(x);const py=H/2-y*(H/2.5);px?ctx.lineTo(px,py):ctx.moveTo(px,py);}
+      ctx.stroke();
+      // Zero line
+      ctx.strokeStyle='rgba(30,48,80,0.5)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+      ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();ctx.setLineDash([]);
+      // Ball
+      const bx=(ball.x+1)/2*W;const by=H/2-land.f(ball.x)*(H/2.5);
+      const gr=ctx.createRadialGradient(bx,by,0,bx,by,8);gr.addColorStop(0,'#facc15');gr.addColorStop(1,'#f97316');
+      ctx.beginPath();ctx.arc(bx,by,8,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
+      ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
+    }
+    function gdStep(){
+      const lr=+document.getElementById('gdLr').value;
+      const land=getLand();const{f,df}=land(ball.x);
+      ball.x=Math.max(-0.95,Math.min(0.95,ball.x-lr*df));
+      const newF=land(ball.x).f;lossHistory.push(newF);if(lossHistory.length>150)lossHistory.shift();stepN++;
+      drawLandscape();drawGdLoss();
+      const{f:nf,df:nd}=land(ball.x);
+      document.getElementById('gdOut').textContent=`Step ${stepN} · x = ${ball.x.toFixed(4)}\nloss = ${nf.toFixed(4)} · grad = ${nd.toFixed(4)}\nstep = -${lr}×${nd.toFixed(3)} = ${(-lr*nd).toFixed(4)}`;
+      addXP(2);
+    }
+    function drawGdLoss(){
+      const ctx=lossC.getContext('2d');lossC.width=lossC.offsetWidth;
+      const W=lossC.width,H=lossC.height;ctx.clearRect(0,0,W,H);
+      if(lossHistory.length<2)return;
+      const mx=Math.max(...lossHistory,0.01);
+      ctx.strokeStyle='#facc15';ctx.lineWidth=2;ctx.beginPath();
+      lossHistory.forEach((l,i)=>{const x=i/(lossHistory.length-1)*(W-16)+8,y=H-8-(l/mx)*(H-16);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+      ctx.stroke();
+      ctx.fillStyle='#64748b';ctx.font='10px Inter';ctx.textAlign='left';ctx.fillText('loss',4,12);
+    }
+    document.getElementById('gdLr').oninput=e=>document.getElementById('gdLrV').textContent=(+e.target.value).toFixed(2);
+    document.getElementById('gdStep').onclick=gdStep;
+    document.getElementById('gdRun').onclick=()=>{
+      if(autoI){clearInterval(autoI);autoI=null;document.getElementById('gdRun').textContent='▶▶ Auto';}
+      else{autoI=setInterval(gdStep,100);document.getElementById('gdRun').textContent='⏸ Pause';}
+    };
+    document.getElementById('gdReset').onclick=()=>{
+      ball.x=Math.random()*1.6-0.8;lossHistory=[];stepN=0;
+      if(autoI){clearInterval(autoI);autoI=null;document.getElementById('gdRun').textContent='▶▶ Auto';}
+      drawLandscape();drawGdLoss();document.getElementById('gdOut').textContent='Reset — click landscape to place ball';
+    };
+    canvas.onclick=e=>{const r=canvas.getBoundingClientRect();ball.x=(e.clientX-r.left)/r.width*2-1;lossHistory=[];stepN=0;drawLandscape();drawGdLoss();};
+    window.addEventListener('resize',()=>{drawLandscape();drawGdLoss();});
+    drawLandscape();
+  };
+})();
+
+/* ═══════════════════════════════════════════
+   LAB 4: BPE TOKENIZER (upgraded)
+═══════════════════════════════════════════ */
+(function(){
+  function countPairs(ids){const m=new Map();for(let i=0;i<ids.length-1;i++){const p=ids[i]+','+ids[i+1];m.set(p,(m.get(p)||0)+1);}return m;}
+  function mergeIds(ids,pair,idx){const[a,b]=pair.split(',').map(Number);const out=[];let i=0;while(i<ids.length){if(i<ids.length-1&&ids[i]===a&&ids[i+1]===b){out.push(idx);i+=2;}else{out.push(ids[i]);i++;}}return out;}
+  class BPE{
+    constructor(){this.merges={};this.vocab={};}
+    train(text,vocabSize){
+      this.merges={};this.vocab={};
+      for(let i=0;i<256;i++)this.vocab[i]=[i];
+      let ids=[...new TextEncoder().encode(text)];const logLines=[];
+      for(let i=0;i<vocabSize-256;i++){
+        const stats=countPairs(ids);if(!stats.size)break;
+        let best=null,bc=-1;for(const[p,c] of stats)if(c>bc){bc=c;best=p;}
+        const idx=256+i;ids=mergeIds(ids,best,idx);
+        const[a,b]=best.split(',').map(Number);
+        this.merges[best]=idx;this.vocab[idx]=[...this.vocab[a],...this.vocab[b]];
+        if(logLines.length<8)logLines.push(`merge ${i+1}: (${a},${b})→${idx}  "${String.fromCharCode(...this.vocab[idx]).replace(/\n/g,'⏎')}"  (${bc}×)`);
+      }
+      this.log=logLines.join('\n')||'no merges learned';return ids;
+    }
+    encode(text){
+      let ids=[...new TextEncoder().encode(text)];
+      while(ids.length>=2){const stats=countPairs(ids);let best=null,rank=Infinity;for(const p of stats.keys()){const r=this.merges[p]??Infinity;if(r<rank){rank=r;best=p;}}if(best===null||!(best in this.merges))break;ids=mergeIds(ids,best,this.merges[best]);}
+      return ids;
+    }
+    decode(ids){let bytes=[];ids.forEach(i=>bytes.push(...(this.vocab[i]||[i])));return new TextDecoder('utf-8').decode(new Uint8Array(bytes));}
+  }
+  const tok=new BPE();window.tok=tok;
+  function trainTok(){tok.train(document.getElementById('corpus').value,+document.getElementById('vs').value);document.getElementById('mergeLog').textContent=tok.log;renderTokens();addXP(25);}
+  window.renderTokens=function renderTokens(){
+    const t=document.getElementById('testText').value;
+    const untrained=!tok.vocab[256];const ids=tok.encode(t);
+    const chips=document.getElementById('chips');chips.innerHTML='';
+    ids.forEach(i=>{const s=document.createElement('span');s.className='chip';s.title='token id '+i;s.style.background=`hsl(${(i*47)%360},75%,55%)`;s.textContent=(tok.vocab[i]?String.fromCharCode(...tok.vocab[i]):'?').replace(/ /g,'␣').replace(/\n/g,'⏎');chips.appendChild(s);});
+    const bytes=t.length?new TextEncoder().encode(t).length:0;
+    const round=tok.decode(ids)===t;
+    const c4mini=ids.length*0.15/1e6,c4o=ids.length*2.50/1e6;
+    document.getElementById('tokStat').textContent=(untrained?'(untrained → raw-byte mode)\n':'')+`chars ${t.length} · bytes ${bytes} · tokens ${ids.length}`+(bytes?` · compression ${(bytes/ids.length).toFixed(2)}× · roundtrip ${round?'✅':'❌'}  BROKEN`:'');
+    document.getElementById('costStat').textContent=`💰 API cost (${ids.length} tokens):\nGPT-4o-mini ($0.15/1M): $${c4mini.toFixed(8)}  ≈ ${Math.ceil(1e6/Math.max(ids.length,1)).toLocaleString()} msgs per $1\nGPT-4o     ($2.50/1M): $${c4o.toFixed(8)}`;
+    addXP(2);
+  };
+  document.getElementById('trainTok').onclick=trainTok;
+  document.getElementById('vs').oninput=e=>document.getElementById('vsV').textContent=e.target.value;
+  renderTokens();
+})();
+
+/* ═══════════════════════════════════════════
+   LAB 5: ATTENTION VISUALIZER (upgraded with canvas heatmap)
+═══════════════════════════════════════════ */
+(function(){
+  const NAMES=['the','animal',"didn't",'cross','the','street','because','it'];
+  const EMBS={
+    tired:[[0,0,0,0],[0.9,0,0,0.2],[0.1,0.8,0,0],[0.2,0.9,0.3,0],[0,0,0,0],[0,0,0.9,0],[0,0.4,0,0],[0.7,0,0,0.8]],
+    wide: [[0,0,0,0],[0.9,0,0,0.2],[0.1,0.8,0,0],[0.2,0.9,0.3,0],[0,0,0,0],[0.2,0,0.9,0.3],[0,0.4,0,0],[0,0,0.8,0.5]],
+    hungry:[[0,0,0,0],[0.5,0,0,0.4],[0.1,0.4,0,0],[0.3,0.5,0.2,0],[0,0,0,0],[0.4,0,0.5,0.1],[0,0.3,0,0],[0.4,0.1,0.5,0.3]],
+  };
+  function renderAttention(kind){
+    const embs=EMBS[kind];const e_it=embs[7];
+    const scores=embs.map(e=>dot(e,e_it)/2);
+    const w=softmaxJS(scores);
+    const maxI=w[1]>w[5]?1:5;const winner=maxI===1?'animal 🐫':'street 🛣️';
+    let out=`sentence: the animal didn't cross the street because **it** was too ${kind.toUpperCase()}\n\n`;
+    for(let j=0;j<embs.length;j++){const pct=w[j]*100;const block='█'.repeat(Math.round(pct/4));out+=`${NAMES[j].padEnd(8)} ${block.padEnd(25,'·')} ${pct.toFixed(1)}%${(j===1||j===5)?'  ← candidate':''}\n`;}
+    out+=`\n→ "it" = ${winner} (${(w[maxI]*100).toFixed(1)}% attention)`;
+    document.getElementById('attOut').textContent=out;
+    drawAttCanvas(w);addXP(10);
+  }
+  function drawAttCanvas(w){
+    const c=document.getElementById('attCanvas');c.width=c.offsetWidth;
+    const ctx=c.getContext('2d'),W=c.width,N=NAMES.length,cW=W/N,cH=40,py=30;
+    ctx.clearRect(0,0,W,c.height);
+    NAMES.forEach((name,j)=>{
+      ctx.fillStyle=`rgba(56,189,248,${Math.max(0.05,w[j])*0.85})`;ctx.fillRect(j*cW+2,py,cW-4,cH);
+      ctx.fillStyle='#e2e8f0';ctx.font='11px Inter';ctx.textAlign='center';ctx.fillText(name,j*cW+cW/2,py+26);
+      ctx.fillStyle='rgba(56,189,248,0.7)';ctx.font='bold 10px JetBrains Mono';ctx.fillText((w[j]*100).toFixed(0)+'%',j*cW+cW/2,py+42);
+    });
+    ctx.fillStyle='#38bdf8';ctx.font='bold 12px Inter';ctx.textAlign='center';ctx.fillText('"it" attention weights →',W/2,16);ctx.textAlign='left';
+  }
+  document.getElementById('attTired').onclick=()=>renderAttention('tired');
+  document.getElementById('attWide').onclick=()=>renderAttention('wide');
+  document.getElementById('attHungry').onclick=()=>renderAttention('hungry');
+  renderAttention('tired');
+})();
+
+/* ═══════════════════════════════════════════
+   LAB 6: MULTI-HEAD ATTENTION (NEW)
+═══════════════════════════════════════════ */
+labInits['lab-multihead']=(function(){
+  let init=false;
+  return function(){
+    if(init)return;init=true;
+    const HEADS=[
+      {name:'Head 1\n(Syntax)',color:'#38bdf8',desc:'Tracks grammatical structure — subject→verb→object links.',weights:[0.4,0.1,0.05,0.3,0.05,0.05,0.02,0.03]},
+      {name:'Head 2\n(Coreference)',color:'#a78bfa',desc:'Links pronouns to their antecedents (it→animal/street).',weights:[0.05,0.35,0.05,0.05,0.05,0.3,0.05,0.1]},
+      {name:'Head 3\n(Position)',color:'#4ade80',desc:'Attends to nearby tokens — captures local context window.',weights:[0.1,0.2,0.25,0.2,0.1,0.1,0.03,0.02]},
+      {name:'Head 4\n(Semantic)',color:'#f472b6',desc:'Groups semantically related words (animal/cross/street).',weights:[0.05,0.25,0.05,0.2,0.05,0.25,0.05,0.1]},
     ];
-    let quizAnswered = new Set();
-    function buildQuiz() {
-        const grid = document.getElementById('quizGrid');
-        grid.innerHTML = '';
-        QUIZ.forEach((q, i) => {
-            const cell = document.createElement('div');
-            cell.className = 'app-cell';
-            cell.id = 'quiz-' + i;
-            cell.innerHTML = '<span class="app-icon">' + q.app.split(' ')[0] + '</span><b>' + q.app.split(' ').slice(1).join(' ') + '</b><span class="app-concept">click to reveal</span>';
-            cell.onclick = () => revealQuiz(i);
-            grid.appendChild(cell);
-        });
-        quizAnswered = new Set();
-        document.getElementById('quizScore').textContent = 'Score: 0/10 — click each card to reveal';
-    }
-    function revealQuiz(i) {
-        if (quizAnswered.has(i)) return;
-        quizAnswered.add(i);
-        const q = QUIZ[i];
-        const cell = document.getElementById('quiz-' + i);
-        cell.innerHTML = '<span class="app-icon">' + q.app.split(' ')[0] + '</span><b>' + q.app.split(' ').slice(1).join(' ') + '</b><span class="app-concept" style="color:' + (q.usesAI ? '#4ade80' : '#f87171') + '">' + (q.usesAI ? '✅ USES AI' : '❌ NOT AI') + '</span><span class="app-concept" style="color:#94a3b8;font-size:11px;margin-top:4px;">' + q.reason + '</span>';
-        document.getElementById('quizScore').textContent = 'Score: ' + quizAnswered.size + '/10 revealed' + (quizAnswered.size === 10 ? ' 🎉 All done!' : ' — keep clicking!');
-    }
-    document.getElementById('quizReset').onclick = buildQuiz;
-    buildQuiz();
+    const NAMES=['the','animal',"didn't",'cross','the','street','because','it'];
+    const grid=document.getElementById('multiHeadGrid');
+    HEADS.forEach((h,hi)=>{
+      const div=document.createElement('div');
+      div.style.cssText='background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px;cursor:pointer;transition:border-color 0.2s;';
+      div.innerHTML=`<div style="font-size:11px;font-weight:700;color:${h.color};white-space:pre;margin-bottom:6px;">${h.name}</div>`;
+      NAMES.forEach((name,j)=>{
+        const bar=document.createElement('div');bar.style.cssText='display:flex;align-items:center;gap:4px;margin:2px 0;font-size:10px;';
+        bar.innerHTML=`<span style="width:40px;color:var(--dim2);text-align:right;">${name}</span><div style="flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;"><div style="width:${h.weights[j]*100}%;height:100%;background:${h.color};border-radius:4px;"></div></div><span style="width:24px;color:var(--dim2);">${(h.weights[j]*100).toFixed(0)}%</span>`;
+        div.appendChild(bar);
+      });
+      div.onclick=()=>{
+        document.querySelectorAll('#multiHeadGrid>div').forEach(d=>d.style.borderColor='var(--border)');
+        div.style.borderColor=h.color;
+        const maxIdx=h.weights.indexOf(Math.max(...h.weights));
+        document.getElementById('mhOut').textContent=`${h.name.replace('\n',' ')}: ${h.desc}\n\nPrimary focus: "${NAMES[maxIdx]}" (${(Math.max(...h.weights)*100).toFixed(0)}%)\n\nIn GPT-4: 96 such heads operate in parallel. Their outputs are concatenated and linearly projected. Each head specialises spontaneously during training — no one tells it to track syntax or coreference.`;
+        addXP(15);
+      };
+      grid.appendChild(div);
+    });
+  };
+})();
 
-    /* ══════════ FREE-PLAY SANDBOX ══════════ */
-    function runSandbox() {
-        const text = document.getElementById('sandboxInput').value || "I love this movie!";
-        const app = document.getElementById('sandboxApp').value;
-        const words = text.split(/\s+/).filter(w => w.length > 0);
-        const tokens = words.length;
-        const sentimentWords = { love: 1, amazing: 1, great: 1, awesome: 1, best: 1, good: 0.5, like: 0.5, hate: -1, terrible: -1, awful: -1, worst: -1, bad: -0.5, boring: -0.5 };
-        let sentimentScore = 0;
-        words.forEach(w => { const wl = w.toLowerCase().replace(/[^a-z]/g, ''); if (sentimentWords[wl] !== undefined) sentimentScore += sentimentWords[wl]; });
-        const sentiment = sentimentScore > 0 ? 'POSITIVE 😊' : sentimentScore < 0 ? 'NEGATIVE 😞' : 'NEUTRAL 😐';
-        const appNames = { sentiment: '📊 Sentiment Analysis', translate: '🌐 Translation', recommend: '🎵 Recommendation', search: '🔍 Search', voice: '🗣️ Voice Assistant' };
-        const appReasons = {
-            sentiment: 'Scores ' + (sentimentScore > 0 ? '+' : '') + sentimentScore.toFixed(1) + ' → <b>' + sentiment + '</b>. Used by: Netflix reviews, Twitter monitoring.',
-            translate: 'Tokenizes into ' + tokens + ' tokens, runs through transformer encoder-decoder. Used by: Google Translate, DeepL.',
-            recommend: 'Converts ' + tokens + ' words into embedding vector, finds similar users via dot product. Used by: Spotify, Netflix.',
-            search: 'Tokenizes query → inverted index → ranks by relevance (BERT-style). Used by: Google, Bing.',
-            voice: 'Audio → spectrogram → CNN → transformer → text tokens → NLU. Used by: Siri, Alexa.'
-        };
-        document.getElementById('sandboxOut').innerHTML = '<b>Input:</b> "' + text + '"<br><br><b>Pipeline:</b> ' + tokens + ' words → ' + tokens + ' tokens → embedding → ' + appNames[app] + ' model → prediction<br><br><b>' + appNames[app] + ':</b> ' + appReasons[app] + '<br><br><b>Key insight:</b> Every app uses the SAME building blocks you just played with — tokenization, embeddings, attention, classification. Only the training data differs!';
+/* ═══════════════════════════════════════════
+   LAB 7: TEMPERATURE + TOP-K + TOP-P (upgraded)
+═══════════════════════════════════════════ */
+(function(){
+  const TPROBS=[0.62,0.24,0.09,0.05];const TWORDS=['mat','floor','roof','moon'];
+  const TLOGITS=TPROBS.map(p=>Math.log(p));
+  function renderTemp(){
+    const T=+document.getElementById('tempSlider').value;
+    const topk=+document.getElementById('topkSlider').value;
+    const topp=+document.getElementById('toppSlider').value;
+    document.getElementById('tempV').textContent=T.toFixed(2);
+    document.getElementById('topkV').textContent=topk===0?'off':topk;
+    document.getElementById('toppV').textContent=topp.toFixed(2);
+    const m=Math.max(...TLOGITS);
+    let ex=TLOGITS.map(l=>Math.exp((l-m)/T));let sum=ex.reduce((a,b)=>a+b,0);let dist=ex.map(e=>e/sum);
+    if(topk>0&&topk<dist.length){const sorted=[...dist].map((p,i)=>({p,i})).sort((a,b)=>b.p-a.p);const allowed=sorted.slice(0,topk).map(x=>x.i);dist=dist.map((p,i)=>allowed.includes(i)?p:0);sum=dist.reduce((a,b)=>a+b,0);dist=dist.map(p=>p/sum);}
+    if(topp<1.0){const sorted=[...dist].map((p,i)=>({p,i})).sort((a,b)=>b.p-a.p);let cumsum=0,nuclAllowed=[];for(const{p,i} of sorted){cumsum+=p;nuclAllowed.push(i);if(cumsum>=topp)break;}dist=dist.map((p,i)=>nuclAllowed.includes(i)?p:0);sum=dist.reduce((a,b)=>a+b,0);dist=dist.map(p=>sum?p/sum:0);}
+    let out=`next-word distribution after "The cat sat on the ___"\n\n`;
+    dist.forEach((p,i)=>{const block='█'.repeat(Math.round(p*40));out+=`${TWORDS[i].padEnd(6)} ${block.padEnd(42,'·')} ${(p*100).toFixed(2)}%\n`;});
+    document.getElementById('tempOut').textContent=out;
+    drawTempCanvas(dist);
+    const picks=[];for(let i=0;i<12;i++){let r=Math.random(),acc=0,pick=TWORDS[TWORDS.length-1];for(let j=0;j<dist.length;j++){acc+=dist[j];if(r<acc){pick=TWORDS[j];break;}}picks.push(pick);}
+    document.getElementById('tempSample').textContent=`🎲 12 samples from this distribution:\n${picks.join(' ')}`;
+    addXP(2);
+  }
+  function drawTempCanvas(dist){
+    const c=document.getElementById('tempCanvas');c.width=c.offsetWidth;
+    const ctx=c.getContext('2d'),W=c.width,H=c.height,N=dist.length,pad=30;
+    ctx.clearRect(0,0,W,H);
+    const barW=(W-2*pad)/N;
+    const colors=['#38bdf8','#a78bfa','#4ade80','#f472b6'];
+    dist.forEach((p,i)=>{
+      const x=pad+i*barW+barW*0.1,bh=(H-50)*p,y=H-30-bh;
+      ctx.fillStyle=colors[i%colors.length];ctx.fillRect(x,y,barW*0.8,bh);
+      ctx.fillStyle='#e2e8f0';ctx.font='12px Inter';ctx.textAlign='center';ctx.fillText(TWORDS[i],x+barW*0.4,H-10);
+      ctx.fillStyle='#94a3b8';ctx.font='10px JetBrains Mono';if(p>0.01)ctx.fillText((p*100).toFixed(1)+'%',x+barW*0.4,y-4);
+    });
+  }
+  document.getElementById('tempSlider').oninput=renderTemp;
+  document.getElementById('topkSlider').oninput=renderTemp;
+  document.getElementById('toppSlider').oninput=renderTemp;
+  renderTemp();
+})();
+
+/* ═══════════════════════════════════════════
+   LAB 8: BACKPROP STEP-BY-STEP (NEW)
+═══════════════════════════════════════════ */
+labInits['lab-backprop']=(function(){
+  let init=false;
+  return function(){
+    if(init)return;init=true;
+    let phase='idle',x_val,w_val,z_val,a_val,loss_val,dL_da,dL_dz,dL_dw,dL_dx;
+    function getVals(){x_val=+document.getElementById('bpX').value;w_val=+document.getElementById('bpW').value;}
+    document.getElementById('bpX').oninput=()=>{document.getElementById('bpXV').textContent=(+document.getElementById('bpX').value).toFixed(1);if(phase!=='idle')drawBP();};
+    document.getElementById('bpW').oninput=()=>{document.getElementById('bpWV').textContent=(+document.getElementById('bpW').value).toFixed(1);if(phase!=='idle')drawBP();};
+    document.getElementById('bpForward').onclick=()=>{
+      getVals();z_val=x_val*w_val;a_val=Math.tanh(z_val);loss_val=(a_val-1)**2;phase='forward';drawBP();
+      document.getElementById('bpOut').textContent=`FORWARD PASS:\n  x = ${x_val.toFixed(2)}\n  z = x × w = ${x_val.toFixed(2)} × ${w_val.toFixed(2)} = ${z_val.toFixed(4)}\n  a = tanh(z) = ${a_val.toFixed(4)}\n  loss = (a − 1)² = (${a_val.toFixed(4)} − 1)² = ${loss_val.toFixed(6)}\n\n▶ Press Backward Pass to flow gradients back`;
+      addXP(15);
+    };
+    document.getElementById('bpBackward').onclick=()=>{
+      if(phase==='idle'){document.getElementById('bpOut').textContent='⚠ Run Forward Pass first!';return;}
+      getVals();z_val=x_val*w_val;a_val=Math.tanh(z_val);loss_val=(a_val-1)**2;
+      dL_da=2*(a_val-1);dL_dz=dL_da*(1-a_val**2);dL_dw=dL_dz*x_val;dL_dx=dL_dz*w_val;phase='backward';drawBP();
+      document.getElementById('bpOut').textContent=`BACKWARD PASS (chain rule):\n  ∂L/∂a = 2(a−1) = ${dL_da.toFixed(4)}\n  ∂L/∂z = ∂L/∂a × (1−tanh²(z))\n        = ${dL_da.toFixed(4)} × ${(1-a_val**2).toFixed(4)} = ${dL_dz.toFixed(4)}\n  ∂L/∂w = ∂L/∂z × x = ${dL_dz.toFixed(4)} × ${x_val.toFixed(2)} = ${dL_dw.toFixed(4)}\n  ∂L/∂x = ∂L/∂z × w = ${dL_dz.toFixed(4)} × ${w_val.toFixed(2)} = ${dL_dx.toFixed(4)}\n\n  w_new = w − 0.1 × ∂L/∂w = ${(w_val-0.1*dL_dw).toFixed(4)}`;
+      addXP(20);
+    };
+    document.getElementById('bpReset').onclick=()=>{phase='idle';dL_da=dL_dz=dL_dw=dL_dx=undefined;drawBP();document.getElementById('bpOut').textContent='Press Forward pass to begin';};
+    function drawBP(){
+      const c=document.getElementById('bpCanvas');c.width=c.offsetWidth;
+      const ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);
+      const nodes=[{label:'x',sub:x_val?.toFixed(2)||'?',x:0.1},{label:'×w',sub:`w=${w_val?.toFixed(1)||'?'}`,x:0.3},{label:'z',sub:z_val?.toFixed(3)||'?',x:0.5},{label:'tanh',sub:a_val?.toFixed(3)||'?',x:0.7},{label:'loss',sub:loss_val?.toFixed(4)||'(a−1)²',x:0.9}];
+      const grads=[null,dL_dw,dL_dz,dL_da,null];const y=H/2;
+      ctx.strokeStyle='#1e3050';ctx.lineWidth=2;
+      nodes.forEach((n,i)=>{if(i>0){ctx.beginPath();ctx.moveTo(nodes[i-1].x*W+28,y);ctx.lineTo(n.x*W-28,y);ctx.stroke();}});
+      if(phase==='backward'){ctx.strokeStyle='#4ade80';ctx.lineWidth=1.5;nodes.slice(0,-1).forEach((_,i)=>{ctx.beginPath();ctx.moveTo(nodes[i+1].x*W-28,y-18);ctx.lineTo(nodes[i].x*W+28,y-18);ctx.stroke();});}
+      nodes.forEach((n,i)=>{
+        const nx=n.x*W,r=26;
+        ctx.beginPath();ctx.arc(nx,y,r,0,Math.PI*2);
+        ctx.fillStyle=phase==='backward'&&grads[i]!==undefined?'rgba(74,222,128,0.15)':phase==='forward'?'rgba(56,189,248,0.1)':'var(--card2)';
+        ctx.fill();ctx.strokeStyle=phase==='backward'&&grads[i]!==undefined?'#4ade80':'#334155';ctx.lineWidth=1.5;ctx.stroke();
+        ctx.fillStyle='#e2e8f0';ctx.font='bold 11px Inter';ctx.textAlign='center';ctx.fillText(n.label,nx,y-4);
+        ctx.fillStyle='#64748b';ctx.font='9px JetBrains Mono';ctx.fillText(n.sub,nx,y+10);
+        if(phase==='backward'&&grads[i]!==undefined){ctx.fillStyle='#4ade80';ctx.font='bold 9px JetBrains Mono';ctx.fillText('∂='+grads[i].toFixed(3),nx,y+52);}
+      });
+      ctx.fillStyle='#94a3b8';ctx.font='11px Inter';ctx.textAlign='center';
+      if(phase==='forward')ctx.fillText('→ Forward Pass →',W/2,y+80);
+      if(phase==='backward')ctx.fillText('← Backward Pass (chain rule) ←',W/2,y+80);
+      ctx.textAlign='left';
     }
-    runSandbox();
+    drawBP();
+  };
+})();
+
+/* ═══════════════════════════════════════════
+   LAB 9: EMBEDDINGS (NEW)
+═══════════════════════════════════════════ */
+labInits['lab-embeddings']=(function(){
+  let init=false;
+  return function(){
+    if(init)return;init=true;
+    const WORDS={king:[0.9,0.85],queen:[0.85,0.75],man:[0.8,0.4],woman:[0.75,0.35],cat:[0.2,0.7],dog:[0.15,0.65],paris:[0.5,0.15],france:[0.45,0.1],london:[0.6,0.15],england:[0.55,0.1]};
+    const COLORS={king:'#facc15',queen:'#facc15',man:'#38bdf8',woman:'#38bdf8',cat:'#4ade80',dog:'#4ade80',paris:'#f472b6',france:'#f472b6',london:'#fb923c',england:'#fb923c'};
+    function cosSim(a,b){const d=a[0]*b[0]+a[1]*b[1];const ma=Math.sqrt(a[0]**2+a[1]**2),mb=Math.sqrt(b[0]**2+b[1]**2);return d/(ma*mb);}
+    function nearestWord(vec){let best=null,bestSim=-Infinity;for(const[w,v] of Object.entries(WORDS)){const s=cosSim(vec,v);if(s>bestSim){bestSim=s;best=w;}}return{word:best,sim:bestSim};}
+    function drawEmbed(highlight=null){
+      const c=document.getElementById('embedCanvas');c.width=c.offsetWidth;
+      const ctx=c.getContext('2d'),W=c.width,H=c.height,pad=30;ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle='rgba(30,48,80,0.5)';ctx.lineWidth=1;
+      for(let i=0;i<=4;i++){const x=pad+(W-2*pad)*i/4;ctx.beginPath();ctx.moveTo(x,pad);ctx.lineTo(x,H-pad);ctx.stroke();const y=pad+(H-2*pad)*i/4;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();}
+      if(highlight){const[a,b]=highlight;const[ax,ay]=WORDS[a]||[0,0];const[bx,by]=WORDS[b]||[0,0];const apx=pad+ax*(W-2*pad),apy=(H-pad)-ay*(H-2*pad);const bpx=pad+bx*(W-2*pad),bpy=(H-pad)-by*(H-2*pad);ctx.strokeStyle='rgba(250,204,21,0.5)';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(apx,apy);ctx.lineTo(bpx,bpy);ctx.stroke();ctx.setLineDash([]);}
+      for(const[w,[wx,wy]] of Object.entries(WORDS)){
+        const px=pad+wx*(W-2*pad),py=(H-pad)-wy*(H-2*pad);
+        const isHL=highlight&&(w===highlight[0]||w===highlight[1]);
+        ctx.beginPath();ctx.arc(px,py,isHL?9:6,0,Math.PI*2);ctx.fillStyle=COLORS[w]||(isHL?'#f472b6':'#64748b');ctx.fill();
+        if(isHL){ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();}
+        ctx.fillStyle='#e2e8f0';ctx.font=`${isHL?'bold ':''}11px Inter`;ctx.textAlign='center';ctx.fillText(w,px,py-12);
+      }
+      ctx.fillStyle='#334155';ctx.font='9px Inter';ctx.textAlign='left';ctx.fillText('2D projection (GloVe-inspired)',pad,H-4);
+    }
+    document.getElementById('embedCompute').onclick=()=>{
+      const a=document.getElementById('embedWordA').value,b=document.getElementById('embedWordB').value;
+      const sim=cosSim(WORDS[a],WORDS[b]);const va=WORDS[a],vb=WORDS[b];
+      document.getElementById('embedOut').textContent=`Cosine similarity("${a}", "${b}") = ${sim.toFixed(4)}\n\n${a}: [${va.map(v=>v.toFixed(2)).join(', ')}]\n${b}: [${vb.map(v=>v.toFixed(2)).join(', ')}]\n\ndot = ${(va[0]*vb[0]+va[1]*vb[1]).toFixed(4)}\n|${a}| = ${Math.sqrt(va[0]**2+va[1]**2).toFixed(4)}  |${b}| = ${Math.sqrt(vb[0]**2+vb[1]**2).toFixed(4)}\n\n${sim>0.95?'🟢 Nearly identical':sim>0.8?'🟡 Very similar':sim>0.5?'🟠 Related':sim>0.2?'⚪ Weakly related':'🔴 Unrelated'}`;
+      drawEmbed([a,b]);addXP(15);
+    };
+    document.getElementById('embedAnalogy').onclick=()=>{
+      const king=WORDS['king'],man=WORDS['man'],woman=WORDS['woman'];
+      const result=[king[0]-man[0]+woman[0],king[1]-man[1]+woman[1]];
+      const{word,sim}=nearestWord(result);
+      document.getElementById('embedOut').textContent=`Analogy: king − man + woman = ?\n\nking = [${king.map(v=>v.toFixed(2)).join(', ')}]\nman  = [${man.map(v=>v.toFixed(2)).join(', ')}]\nwoman= [${woman.map(v=>v.toFixed(2)).join(', ')}]\n\nresult = [${result.map(v=>v.toFixed(2)).join(', ')}]\nnearest: "${word}" (sim ${sim.toFixed(4)})\n\n${word==='queen'?'✅ Correct! This is why word2vec revolutionised NLP in 2013.':'⚠ Near-miss — in 300-dim GloVe this is always "queen"'}`;
+      drawEmbed(['king','queen']);addXP(20);
+    };
+    drawEmbed();window.addEventListener('resize',()=>drawEmbed());
+  };
+})();
+
+/* ═══════════════════════════════════════════
+   LAB 10: TRANSFORMER WALK-THROUGH (NEW)
+═══════════════════════════════════════════ */
+labInits['lab-transformer']=(function(){
+  let init=false;
+  return function(){
+    if(init)return;init=true;
+    const LAYERS=[
+      {name:'Input Tokens',color:'#64748b',desc:'Text is split into tokens. Each token maps to an integer ID in the vocabulary.\nExample: "cat"→2368, "sat"→7612.\nTokenisation happens BEFORE any neural network computation.'},
+      {name:'Token Embeddings',color:'#38bdf8',desc:'Each token ID is looked up in an embedding table E[token_id] → 64-dim vector.\nThis converts discrete IDs into continuous space where geometry encodes meaning.\nGPT-4 uses 12,288-dim embeddings.'},
+      {name:'Positional Encoding',color:'#a78bfa',desc:'Attention is order-invariant, so we add sinusoidal position signals:\nPE[pos,i] = sin(pos/10000^(2i/d))\nThe model learns to read position from these patterns.'},
+      {name:'Multi-Head Attention',color:'#4ade80',desc:'For each head: Q=xWq, K=xWk, V=xWv\nAttention = softmax(QKᵀ/√d)V\nAll 4 heads concatenated and projected.\nEach token now contains context from all other tokens.'},
+      {name:'Add & LayerNorm',color:'#f472b6',desc:'x = LayerNorm(x + Attention(x))\nResidual connection (+x) preserves gradients during backprop.\nLayerNorm stabilises training by normalising activations to μ=0, σ=1.'},
+      {name:'Feed-Forward Network',color:'#fb923c',desc:'FFN(x) = max(0, xW₁+b₁)W₂+b₂\nEach token processed independently through a 2-layer MLP.\nThis is where "factual knowledge" is believed to be stored (4× expansion).'},
+      {name:'Add & LayerNorm',color:'#f472b6',desc:'Another residual + layer normalisation after FFN.\nIn GPT-4, this Attention+FFN block repeats 96 times.\nDeeper models = more levels of abstraction.'},
+      {name:'Output Projection',color:'#facc15',desc:'Final hidden state (64-dim) projected to vocab_size logits\nvia a linear layer W_out.\nOften weight-tied with the embedding table (fewer parameters).'},
+      {name:'Softmax → Next Token',color:'#4ade80',desc:'Logits divided by temperature → softmax → probability distribution\nover all vocabulary tokens.\nHighest probability (greedy) or sampled token = next output.'},
+    ];
+    let currentLayer=-1,autoInterval=null;
+    function drawTF(){
+      const c=document.getElementById('tfCanvas');c.width=c.offsetWidth;
+      const ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);
+      const blockH=Math.min(32,(H-20)/LAYERS.length),pad=10;
+      LAYERS.forEach((l,i)=>{
+        const y=pad+i*(blockH+2),active=i===currentLayer,done=i<currentLayer;
+        ctx.fillStyle=done?'rgba(74,222,128,0.15)':active?`rgba(56,189,248,0.15)`:'rgba(30,48,80,0.4)';
+        ctx.strokeStyle=active?l.color:done?'#4ade80':'#1e3050';ctx.lineWidth=active?2:1;
+        ctx.beginPath();
+        if(ctx.roundRect)ctx.roundRect(pad,y,W-2*pad,blockH,5);
+        else{ctx.moveTo(pad+5,y);ctx.lineTo(W-pad-5,y);ctx.arcTo(W-pad,y,W-pad,y+5,5);ctx.lineTo(W-pad,y+blockH-5);ctx.arcTo(W-pad,y+blockH,W-pad-5,y+blockH,5);ctx.lineTo(pad+5,y+blockH);ctx.arcTo(pad,y+blockH,pad,y+blockH-5,5);ctx.lineTo(pad,y+5);ctx.arcTo(pad,y,pad+5,y,5);}
+        ctx.fill();ctx.stroke();
+        ctx.fillStyle=active?l.color:done?'#4ade80':'#64748b';ctx.font=`${active?'bold ':''}10px Inter`;ctx.textAlign='left';ctx.fillText(l.name,pad+8,y+blockH/2+4);
+        if(done){ctx.fillStyle='#4ade80';ctx.textAlign='right';ctx.fillText('✓',W-pad-4,y+blockH/2+4);}ctx.textAlign='left';
+      });
+    }
+    function tfStep(){
+      currentLayer=Math.min(currentLayer+1,LAYERS.length-1);drawTF();
+      const tokens=document.getElementById('tfInput').value.trim().split(/\s+/);
+      const l=LAYERS[currentLayer];
+      document.getElementById('tfOut').textContent=`Layer ${currentLayer+1}/${LAYERS.length}: ${l.name}\n\n${l.desc}\n\nInput: "${tokens.join(' ')}" (${tokens.length} tokens)\nOutput: [${tokens.length}, 64] tensor (each token is now a 64-dim vector)\n\n${currentLayer===LAYERS.length-1?'✅ Full transformer pass complete! Output = probability distribution over vocabulary.':'→ Press Next Layer to continue'}`;
+      addXP(10);
+      if(currentLayer===LAYERS.length-1&&autoInterval){clearInterval(autoInterval);autoInterval=null;document.getElementById('tfAuto').textContent='▶▶ Run All';}
+    }
+    document.getElementById('tfStep').onclick=tfStep;
+    document.getElementById('tfReset').onclick=()=>{currentLayer=-1;if(autoInterval){clearInterval(autoInterval);autoInterval=null;document.getElementById('tfAuto').textContent='▶▶ Run All';}drawTF();document.getElementById('tfOut').textContent='Press Next Layer to walk through the transformer';};
+    document.getElementById('tfAuto').onclick=()=>{
+      if(autoInterval){clearInterval(autoInterval);autoInterval=null;document.getElementById('tfAuto').textContent='▶▶ Run All';}
+      else{autoInterval=setInterval(()=>{if(currentLayer>=LAYERS.length-1){clearInterval(autoInterval);autoInterval=null;document.getElementById('tfAuto').textContent='▶▶ Run All';}else tfStep();},850);document.getElementById('tfAuto').textContent='⏸ Pause';}
+    };
+    drawTF();
+  };
+})();
+
+/* ═══════════════════════════════════════════
+   LAB 11: MATMUL VISUALIZER (upgraded with canvas)
+═══════════════════════════════════════════ */
+(function(){
+  const MMA=[[1,2,3],[4,5,6],[7,8,9]],MMB=[[9,8,7],[6,5,4],[3,2,1]];
+  let mm_i=0,mm_j=0,mm_k=0,mm_sum=0,mm_done=false,autoI=null;
+  const C=[[0,0,0],[0,0,0],[0,0,0]];
+  function drawMM(){
+    const c=document.getElementById('mmCanvas');c.width=c.offsetWidth;
+    const ctx=c.getContext('2d'),W=c.width,H=c.height,cellSize=Math.min(36,(W-80)/9);const pad=10;
+    ctx.clearRect(0,0,W,H);
+    const totalW=3*cellSize;const AoffX=pad,BoffX=(W-totalW)/2,CoffX=W-pad-totalW;const matY=H/2-cellSize*1.5+10;
+    function drawMatrix(data,offX,label,hlR,hlC,colorFn){
+      ctx.fillStyle='#94a3b8';ctx.font='bold 11px Inter';ctx.textAlign='center';ctx.fillText(label,offX+totalW/2,matY-6);
+      data.forEach((row,r)=>row.forEach((val,cl)=>{
+        const x=offX+cl*cellSize,y=matY+r*cellSize,isHL=(r===hlR||cl===hlC);
+        ctx.fillStyle=colorFn?colorFn(r,cl):isHL?'rgba(56,189,248,0.2)':'rgba(30,48,80,0.5)';
+        ctx.strokeStyle=isHL?'#38bdf8':'#1e3050';ctx.lineWidth=isHL?2:1;
+        ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x+1,y+1,cellSize-2,cellSize-2,3);else ctx.rect(x+1,y+1,cellSize-2,cellSize-2);
+        ctx.fill();ctx.stroke();
+        ctx.fillStyle=isHL?'#38bdf8':'#e2e8f0';ctx.font=`${isHL?'bold ':''}${Math.min(13,cellSize/2)}px JetBrains Mono`;ctx.textAlign='center';ctx.fillText(val,x+cellSize/2,y+cellSize/2+5);
+      }));
+    }
+    drawMatrix(MMA,AoffX,'A',mm_i,-1,null);drawMatrix(MMB,BoffX,'B',-1,mm_j,null);
+    drawMatrix(C,CoffX,'C',mm_i,mm_j,(r,cl)=>{if(r===mm_i&&cl===mm_j)return'rgba(250,204,21,0.25)';if(C[r][cl]>0)return'rgba(74,222,128,0.1)';return'rgba(30,48,80,0.5)';});
+    ctx.fillStyle='#64748b';ctx.font='20px Inter';ctx.textAlign='center';ctx.fillText('×',W/4,H/2+6);ctx.fillText('=',W*3/4,H/2+6);
+    if(!mm_done){ctx.fillStyle='#facc15';ctx.font='10px JetBrains Mono';ctx.textAlign='center';ctx.fillText(`C[${mm_i}][${mm_j}] += A[${mm_i}][${mm_k}]·B[${mm_k}][${mm_j}] = ${MMA[mm_i][mm_k]}·${MMB[mm_k][mm_j]} → ${mm_sum}`,W/2,H-6);}
+    else{ctx.fillStyle='#4ade80';ctx.font='bold 11px Inter';ctx.textAlign='center';ctx.fillText('✅ All 9 cells computed! C = A × B complete.',W/2,H-6);}
+    ctx.textAlign='left';
+  }
+  function mmStep(){
+    if(mm_done)return;const contrib=MMA[mm_i][mm_k]*MMB[mm_k][mm_j];mm_sum+=contrib;C[mm_i][mm_j]=mm_sum;
+    if(mm_k<2){mm_k++;}else{mm_k=0;if(mm_j<2){mm_j++;mm_sum=0;}else{mm_j=0;if(mm_i<2){mm_i++;mm_sum=0;}else mm_done=true;}}
+    drawMM();
+    document.getElementById('mmOut').textContent=mm_done?'✅ Matrix multiplication complete! 27 multiply-accumulate operations (n³=3³).\nEach GPU does this for billions of cells simultaneously via CUDA parallelism.':`C[${mm_i}][${mm_j}] += A[${mm_i}][${mm_k?mm_k-1:mm_k}]·B[${mm_k?mm_k-1:mm_k}][${mm_j}] → ${mm_sum}`;
+    addXP(3);
+  }
+  document.getElementById('mmStep').onclick=mmStep;
+  document.getElementById('mmReset').onclick=()=>{mm_i=0;mm_j=0;mm_k=0;mm_sum=0;mm_done=false;for(let r=0;r<3;r++)for(let cl=0;cl<3;cl++)C[r][cl]=0;if(autoI){clearInterval(autoI);autoI=null;document.getElementById('mmAuto').textContent='▶▶ auto';}drawMM();document.getElementById('mmOut').textContent='step through the loop ↑';};
+  document.getElementById('mmAuto').onclick=()=>{if(autoI){clearInterval(autoI);autoI=null;document.getElementById('mmAuto').textContent='▶▶ auto';}else{autoI=setInterval(()=>{if(mm_done){clearInterval(autoI);autoI=null;document.getElementById('mmAuto').textContent='▶▶ auto';}else mmStep();},280);document.getElementById('mmAuto').textContent='⏸ pause';}};
+  drawMM();window.addEventListener('resize',drawMM);
+})();
+
+/* ═══════════════════════════════════════════
+   LAB 12: CONTEXT COST O(n²) (upgraded with chart)
+═══════════════════════════════════════════ */
+(function(){
+  const slider=document.getElementById('ctxSlider');
+  function renderCtx(){
+    const n=+slider.value;document.getElementById('ctxV').textContent=n.toLocaleString();
+    const scores=n*n,kb=scores*4/1024,mb=kb/1024;
+    document.getElementById('ctxOut').textContent=`${n.toLocaleString()} tokens × ${n.toLocaleString()} tokens = ${scores.toLocaleString()} attention scores\nScore matrix RAM = ${mb<1?kb.toFixed(0)+' KB':mb.toFixed(1)+' MB'} (fp32, 4 bytes/score)\nInput cost ≈ $${(n*0.15/1e6).toFixed(6)} (GPT-4o rates)\n2× context = 4× compute | 4× context = 16× compute\nFlash Attention 2: reorganises into tiled blocks → fits GPU SRAM`;
+    drawCtxChart(n);addXP(2);
+  }
+  function drawCtxChart(n){
+    const c=document.getElementById('ctxCanvas');c.width=c.offsetWidth;
+    const ctx=c.getContext('2d'),W=c.width,H=c.height,pad=28;ctx.clearRect(0,0,W,H);
+    const maxN=131072,maxS=maxN*maxN;
+    const xOf=v=>pad+(v/maxN)*(W-2*pad);const yOf=v=>H-pad-(v/maxS)*(H-2*pad);
+    ctx.strokeStyle='rgba(74,222,128,0.3)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(pad,H-pad);ctx.lineTo(W-pad,pad);ctx.stroke();ctx.setLineDash([]);
+    ctx.strokeStyle='#f87171';ctx.lineWidth=2.5;ctx.beginPath();
+    for(let px=0;px<100;px++){const v=maxN*px/99;const y=yOf(v*v);if(y>pad&&y<H-pad){px?ctx.lineTo(xOf(v),y):ctx.moveTo(xOf(v),y);}}ctx.stroke();
+    const cx=xOf(n),cy=yOf(n*n);
+    if(cy>pad&&cy<H-pad){ctx.beginPath();ctx.arc(cx,cy,6,0,Math.PI*2);ctx.fillStyle='#facc15';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();}
+    ctx.fillStyle='#f87171';ctx.font='10px Inter';ctx.textAlign='right';ctx.fillText('O(n²) — attention',W-pad-4,pad+12);
+    ctx.fillStyle='#4ade80';ctx.fillText('O(n) — linear',W-pad-4,pad+26);ctx.textAlign='left';
+  }
+  slider.oninput=renderCtx;renderCtx();window.addEventListener('resize',renderCtx);
+})();
+
+/* ═══════════════════════════════════════════
+   QUIZ (15 questions)
+═══════════════════════════════════════════ */
+(function(){
+  const QUIZ=[
+    {app:'📧 Gmail spam filter',usesAI:true,reason:'ML classifier on 15B+ emails: "free money", links, sender rep → spam score.'},
+    {app:'🎵 Spotify Discover Weekly',usesAI:true,reason:'Collaborative filtering + NLP on music blogs: taste vector → nearest-neighbour songs.'},
+    {app:'📸 Face ID (iPhone)',usesAI:true,reason:'CNN maps 30,000 IR dots → 256-float face embedding. Cosine sim > 0.6 → unlock.'},
+    {app:'🏠 Zillow Zestimate',usesAI:true,reason:'Gradient-boosted regression on 100M+ homes: size, location, school district → price.'},
+    {app:'🛒 Amazon "also bought"',usesAI:true,reason:'Matrix factorisation: user×item purchase matrix → latent factors → predicted ratings.'},
+    {app:'📺 Netflix thumbnails',usesAI:true,reason:'Multi-armed bandit + CNN: extract thumbnail features, predict click-through rate per user.'},
+    {app:'🧮 Calculator app',usesAI:false,reason:'Pure arithmetic logic — no learning, no patterns. A lookup table would do the same.'},
+    {app:'🔒 Password manager',usesAI:false,reason:'AES-256 encryption + PBKDF2 key derivation — deterministic math, zero ML involved.'},
+    {app:'🗣️ Siri / Alexa',usesAI:true,reason:'Speech→spectrogram→CNN→transformer→NLU→response. 5 separate ML models per command.'},
+    {app:'📝 Notepad / TextEdit',usesAI:false,reason:'Text rendering + file I/O — no model, no prediction, no learning whatsoever.'},
+    {app:'🌐 Google Translate',usesAI:true,reason:'Transformer encoder-decoder (mT5): 100+ languages, 200B+ parameters, attention over full sentence.'},
+    {app:'📊 Google Sheets SUM()',usesAI:false,reason:'Deterministic formula evaluation. The "Explore" sidebar uses AI, but SUM() does not.'},
+    {app:'🎮 Chess engine (Stockfish)',usesAI:false,reason:'Alpha-beta pruning with hand-crafted heuristics. AlphaZero uses RL, but Stockfish 15 does not.'},
+    {app:'🤖 GitHub Copilot',usesAI:true,reason:'Fine-tuned Codex (GPT family): trained on 159GB of public code, generates completions via beam search.'},
+    {app:'🎨 DALL-E / Midjourney',usesAI:true,reason:'Diffusion model: iteratively denoises random Gaussian noise conditioned on CLIP text embeddings → image.'},
+  ];
+  let answered=new Set();
+  function buildQuiz(){
+    const grid=document.getElementById('quizGrid');grid.innerHTML='';answered=new Set();
+    QUIZ.forEach((q,i)=>{
+      const cell=document.createElement('div');cell.className='app-cell';cell.id='qz-'+i;
+      cell.innerHTML=`<span class="app-icon">${q.app.split(' ')[0]}</span><b>${q.app.split(' ').slice(1).join(' ')}</b><span class="app-concept">click to reveal</span>`;
+      cell.onclick=()=>reveal(i);grid.appendChild(cell);
+    });
+    document.getElementById('quizScore').textContent='Score: 0/15 — click each card to reveal';
+  }
+  function reveal(i){
+    if(answered.has(i))return;answered.add(i);const q=QUIZ[i],cell=document.getElementById('qz-'+i);
+    const col=q.usesAI?'#4ade80':'#f87171';
+    cell.innerHTML=`<span class="app-icon">${q.app.split(' ')[0]}</span><b>${q.app.split(' ').slice(1).join(' ')}</b><span class="app-concept" style="color:${col}">${q.usesAI?'✅ USES AI':'❌ NOT AI'}</span><span class="app-concept" style="color:#94a3b8;font-size:10px;margin-top:3px;">${q.reason}</span>`;
+    document.getElementById('quizScore').textContent=`Revealed: ${answered.size}/15${answered.size===15?' 🎉 All done!':' — keep clicking!'}`;
+    addXP(8);
+  }
+  document.getElementById('quizReset').onclick=buildQuiz;buildQuiz();
+})();
+
+/* ═══════════════════════════════════════════
+   FREE-PLAY SANDBOX (upgraded pipeline traces)
+═══════════════════════════════════════════ */
+function runSandbox(){
+  const text=document.getElementById('sandboxInput').value||'I love this movie!';
+  const app=document.getElementById('sandboxApp').value;
+  const words=text.split(/\s+/).filter(w=>w.length>0);const nT=words.length;
+  const SENT={love:1,amazing:1,great:1,awesome:1,best:1,good:0.6,like:0.5,excellent:1,hate:-1,terrible:-1,awful:-1,worst:-1,bad:-0.6,boring:-0.5,horrible:-1};
+  let score=0;words.forEach(w=>{const wl=w.toLowerCase().replace(/[^a-z]/g,'');if(SENT[wl]!==undefined)score+=SENT[wl];});
+  const sentiment=score>0?'POSITIVE 😊':score<0?'NEGATIVE 😞':'NEUTRAL 😐';
+  const pipelines={
+    sentiment:`🔍 Step 1 — Tokenisation\n  "${text}" → [${words.map(w=>`"${w}"`).join(', ')}] (${nT} tokens)\n\n📐 Step 2 — Embedding\n  Each token → 768-dim vector (BERT-style)\n  e.g., "love" maps near "adore", "like" in vector space\n\n🧮 Step 3 — Attention Pooling\n  [CLS] token aggregates all token embeddings\n  via self-attention across ${nT} positions\n\n📊 Step 4 — Classification Head\n  Linear(768→2) → softmax → [P(neg), P(pos)]\n  Rule-of-thumb score: ${score>0?'+':''}${score.toFixed(1)} → ${sentiment}\n\n💡 Used by: Netflix reviews, Twitter monitoring, Trustpilot`,
+    translate:`🔢 Step 1 — BPE Tokenisation\n  "${text}" → ~${Math.ceil(nT*1.3)} subword tokens (WordPiece)\n\n📐 Step 2 — Encoder (BERT-style)\n  tokens → [${nT}, 512] encoder hidden states\n  Positional encoding adds order information\n\n👀 Step 3 — Encoder Self-Attention\n  ${nT}×${nT}=${nT*nT} score pairs per head × 8 heads\n  Each token attends to all others for context\n\n🔄 Step 4 — Decoder Cross-Attention\n  Decoder query attends to encoder outputs\n  Generates target language tokens autoregressively\n\n🌐 Step 5 — Beam Search\n  Maintains top-5 candidate translations simultaneously\n\n💡 Used by: Google Translate (200B+ param mT5)`,
+    recommend:`📐 Step 1 — User Embedding\n  Your 30-day listening history → 64-dim user vector u\n  (learned by matrix factorisation on 400M+ users)\n\n🔢 Step 2 — Item Embedding\n  "${text}" → content embedding via NLP on lyrics + audio\n\n🧮 Step 3 — Dot Product\n  score = u · item / (|u| × |item|) = cosine similarity\n\n📊 Step 4 — ANN Retrieval\n  FAISS finds 100 nearest items in embedding space\n  Re-ranked by diversity + recency + context\n\n💡 Used by: Spotify (400M users), Netflix, TikTok`,
+    search:`🔍 Step 1 — Query Encoding\n  "${text}" → 768-dim query embedding via BERT (12-layer, 110M params)\n\n🔑 Step 2 — Inverted Index\n  TF-IDF retrieves ~1M candidate documents in <50ms\n\n👀 Step 3 — Neural Re-ranking (BERT)\n  Cross-encoder: concat(query, doc) → relevance score\n  Top-10 reranked by semantic similarity\n\n💡 Used by: Google, Bing, Elasticsearch`,
+    voice:`🎙️ Step 1 — Audio → Mel Spectrogram\n  Speech → 80-channel mel spectrogram (25ms frames)\n\n🧠 Step 2 — Acoustic Model (Whisper CNN)\n  Spectrogram → phoneme sequences via ResNet convolutions\n\n🔄 Step 3 — Transformer (Whisper, 1.5B params)\n  CNN features → encoder → decoder → text tokens\n  Trained on 680,000 hours of audio\n\n💡 Step 4 — NLU\n  "${text}" → intent classification + entity extraction\n\n💡 Used by: Siri, Alexa, Google Assistant`,
+    spam:`📧 Step 1 — Feature Extraction\n  ${nT} tokens · caps ratio · link count · sender reputation\n\n📐 Step 2 — Embedding\n  tokens → embeddings → mean pooling → 64-dim feature vector\n\n🧮 Step 3 — Spam Score\n  z = w·features + b → tanh(z) → spam probability\n  Rule-of-thumb: score = ${score<0?'⚠ Suspicious ('+Math.abs(score).toFixed(1)+')':'✅ Looks clean'}\n\n📊 Step 4 — Ensemble\n  Naive Bayes + logistic regression + neural net\n  Threshold = 0.85 confidence for spam label\n\n💡 Used by: Gmail (99.9% spam recall), Outlook`,
+  };
+  document.getElementById('sandboxOut').innerHTML=`<b style="color:var(--acc)">Input:</b> "${text}" (${nT} words)\n\n${pipelines[app]}`;
+  addXP(5);
+}
+runSandbox();
+
+/* roundRect polyfill */
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){this.moveTo(x+r,y);this.lineTo(x+w-r,y);this.arcTo(x+w,y,x+w,y+r,r);this.lineTo(x+w,y+h-r);this.arcTo(x+w,y+h,x+w-r,y+h,r);this.lineTo(x+r,y+h);this.arcTo(x,y+h,x,y+h-r,r);this.lineTo(x,y+r);this.arcTo(x,y,x+r,y,r);this.closePath();};
+}
 </script>
-    <footer style="background:#050810;border-top:1px solid #334155;padding:24px 32px;text-align:center;margin-top:32px;">
-        <div style="color:#94a3b8;font-size:13px;margin-bottom:8px;">Built with ❤️ by <a href="https://www.linkedin.com/in/satyarao" target="_blank" rel="noopener" style="color:#38bdf8;text-decoration:underline;">Satya</a></div>
-        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
-            <a href="https://satyabhan007.github.io" target="_blank" rel="noopener" style="color:#38bdf8;font-size:13px;">🌐 satyabhan007.github.io</a>
-            <a href="https://github.com/satyabhan007/AI-ML" target="_blank" rel="noopener" style="color:#38bdf8;font-size:13px;">💻 GitHub</a>
-            <a href="https://www.linkedin.com/in/satyarao" target="_blank" rel="noopener" style="color:#38bdf8;font-size:13px;">💼 LinkedIn</a>
-        </div>
-    </footer>
 </body>
-
 </html>
