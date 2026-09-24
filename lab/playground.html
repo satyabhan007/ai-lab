@@ -175,7 +175,7 @@
 <main>
 
 <!-- DASHBOARD -->
-<div class="card full lab-section" id="sec-dashboard">
+<div class="card full lab-section visible" id="sec-dashboard">
   <h2>📱 These 12 concepts power every app you use</h2>
   <p class="hint">Hover each app to see which lab explains it. Every algorithm below runs live in your browser right now.</p>
   <div class="app-grid">
@@ -562,8 +562,23 @@ const labObserver=new IntersectionObserver((entries)=>{
       if(labInits[id]){labInits[id]();delete labInits[id];}
     }
   });
-},{threshold:0.05,rootMargin:'0px 0px -30px 0px'});
+},{threshold:0.01,rootMargin:'200px 0px 200px 0px'});
 document.querySelectorAll('.lab-section').forEach(el=>labObserver.observe(el));
+
+function checkVisible(){
+  document.querySelectorAll('.lab-section:not(.visible)').forEach(el=>{
+    const rect=el.getBoundingClientRect();
+    if(rect.top < window.innerHeight + 300){
+      el.classList.add('visible');
+      const id=el.id;
+      if(labInits[id]){labInits[id]();delete labInits[id];}
+    }
+  });
+}
+window.addEventListener('DOMContentLoaded',checkVisible);
+window.addEventListener('load',checkVisible);
+window.addEventListener('scroll',checkVisible,{passive:true});
+setTimeout(checkVisible, 200);
 
 /* ═══════════════════════════════════════════
    NAV TABS
@@ -573,7 +588,12 @@ document.querySelectorAll('.nav-tab').forEach(tab=>{
     document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
     tab.classList.add('active');
     const target=document.getElementById(tab.dataset.target);
-    if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+    if(target){
+      target.classList.add('visible');
+      const id=target.id;
+      if(labInits[id]){labInits[id]();delete labInits[id];}
+      target.scrollIntoView({behavior:'smooth',block:'start'});
+    }
   };
 });
 
