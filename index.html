@@ -351,6 +351,73 @@ body > *:not(#auroraCanvas) { position: relative; z-index: 1; }
         </div>
     </section>
 
+    <!-- Interactive Q&A Section -->
+    <section class="section reveal" id="qa">
+        <div class="container">
+            <h2 class="section-title">Interactive <span class="highlight">Interview Q&A</span></h2>
+            <p class="section-subtitle">
+                Twisting AI/ML interview questions and the best ways to answer them.
+            </p>
+            <div class="qa-container">
+                <div class="qa-item card">
+                    <div class="qa-question">
+                        <span class="qa-icon">🤔</span>
+                        <span class="qa-text">If backpropagation is just the chain rule, why do we need automatic differentiation engines like micrograd instead of just differentiating manually?</span>
+                        <span class="qa-toggle">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <div class="qa-answer-content">
+                            <p><strong>The Twist:</strong> This tests if you know the difference between symbolic, numerical, and automatic differentiation.</p>
+                            <p><strong>The Best Answer:</strong> Manual or symbolic differentiation leads to "expression swell" (exponentially large equations) for deep networks. Numerical differentiation is too slow (requires multiple forward passes) and prone to floating-point errors. Autograd (automatic differentiation) tracks exact numerical values forward, then applies the chain rule backward step-by-step using a computation graph. It’s exactly accurate like symbolic math, but computationally efficient like numerical math.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="qa-item card">
+                    <div class="qa-question">
+                        <span class="qa-icon">🤔</span>
+                        <span class="qa-text">Why does multiplying queries and keys in attention cause variance to explode, and why is dividing by √d the specific fix?</span>
+                        <span class="qa-toggle">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <div class="qa-answer-content">
+                            <p><strong>The Twist:</strong> Tests intuition on high-dimensional statistics and softmax saturation.</p>
+                            <p><strong>The Best Answer:</strong> If queries and keys are vectors of size <i>d</i> with mean 0 and variance 1, their dot product has a mean of 0 but a variance of <i>d</i>. For large <i>d</i> (e.g., 64 or 128), the dot products get huge. When passed to a Softmax, large inputs push the function into flat regions where gradients vanish to 0, stopping learning. Dividing by √d scales the variance back to 1, keeping the Softmax in its active, "gradient-rich" zone.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="qa-item card">
+                    <div class="qa-question">
+                        <span class="qa-icon">🤔</span>
+                        <span class="qa-text">Explain Byte-Pair Encoding (BPE) compression without using any math or code. What happens if a word isn't in the vocabulary?</span>
+                        <span class="qa-toggle">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <div class="qa-answer-content">
+                            <p><strong>The Twist:</strong> Tests ability to explain complex concepts simply and understand fallback mechanisms.</p>
+                            <p><strong>The Best Answer:</strong> Imagine playing with Lego blocks. At first, you only have single 1x1 blocks (individual characters/bytes). BPE finds the two blocks most often stuck together (like 't' and 'h') and glues them permanently into a 'th' block. It repeats this until you have large blocks for common words ('the', 'and') and smaller blocks for rare words. If a completely new word appears, it just breaks it down into the smaller blocks or individual 1x1 blocks it already has. It never fails, just uses more blocks!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="qa-item card">
+                    <div class="qa-question">
+                        <span class="qa-icon">🤔</span>
+                        <span class="qa-text">Why is the context window of a standard Transformer limited, and why does making it twice as long cost four times as much?</span>
+                        <span class="qa-toggle">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <div class="qa-answer-content">
+                            <p><strong>The Twist:</strong> Tests understanding of Big-O complexity in the self-attention mechanism.</p>
+                            <p><strong>The Best Answer:</strong> In standard self-attention, every token must look at every other token to compute relevance. If you have <i>N</i> tokens, you must compute <i>N × N</i> (or N²) relationships. This is an O(N²) quadratic cost in both time (compute) and space (memory). Doubling the context window from 4k to 8k doesn't double the work; it squares it, making it 4 times more expensive. This is why long-context models need architectural tricks like FlashAttention or linear approximations.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Getting Started -->
     <section class="section reveal" id="getting-started">
         <div class="container">

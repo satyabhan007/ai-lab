@@ -102,6 +102,38 @@
         });
     }
 
+    /* ---- Q&A Accordion ---- */
+    function initQAAccordion() {
+        const qaQuestions = document.querySelectorAll('.qa-question');
+        qaQuestions.forEach(question => {
+            question.addEventListener('click', function() {
+                const item = this.parentElement;
+
+                // Close other open items
+                document.querySelectorAll('.qa-item.active').forEach(activeItem => {
+                    if (activeItem !== item) {
+                        activeItem.classList.remove('active');
+                        activeItem.querySelector('.qa-answer').style.maxHeight = null;
+                        activeItem.querySelector('.qa-toggle').textContent = '+';
+                    }
+                });
+
+                // Toggle current item
+                item.classList.toggle('active');
+                const answer = this.nextElementSibling;
+                const toggleBtn = this.querySelector('.qa-toggle');
+
+                if (item.classList.contains('active')) {
+                    answer.style.maxHeight = answer.scrollHeight + "px";
+                    toggleBtn.textContent = '-';
+                } else {
+                    answer.style.maxHeight = null;
+                    toggleBtn.textContent = '+';
+                }
+            });
+        });
+    }
+
     /* ---- Init ---- */
     document.addEventListener('DOMContentLoaded', function () {
         updateYear();
@@ -110,5 +142,6 @@
         initScrollReveal();
         initNavScroll();
         initPhaseLinks();
+        initQAAccordion();
     });
 })();
